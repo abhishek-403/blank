@@ -6,14 +6,10 @@ import React, { useEffect } from "react";
 type Props = {};
 
 export default function Canvas({}: Props) {
-  useEffect(() => {
+    useEffect(() => {
     const canvas: HTMLCanvasElement = document.querySelector("#canvas_id")!;
     if (!canvas) return;
 
-    canvas.width = CANVAS_WIDTH;
-    canvas.height = CANVAS_HEIGHT;
-
-    document.body.append(canvas);
     let ctx = canvas.getContext("2d");
 
     const board = new Board();
@@ -39,13 +35,13 @@ export default function Canvas({}: Props) {
       requestAnimationFrame(loop);
     };
     loop();
+    console.log("use effec");
+    
   }, []);
   return (
-    <div className="flex flex-col">
-      <div>
-        <canvas className="border-2 border-black " id="canvas_id"></canvas>
-      </div>
+    <div className="flex ">
       <div className="">
+        <canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} className="border-2 border-black " id="canvas_id"></canvas>
         <button id="pencil_btn" className="text-red-500">
           Pencil
         </button>

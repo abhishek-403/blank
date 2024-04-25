@@ -6,11 +6,16 @@ type Props = {};
 
 export default function BoardScreen({}: Props) {
   return (
-    <div className="flex ">
-      <ParticipantsWindow />
-      <Canvas />
-
-      <ChatWindow />
+    <div className="flex border-2 border-black overflow-auto w-full h-full gap-10 justify-center">
+      <div>
+        <ParticipantsWindow />
+      </div>
+      <div>
+        <Canvas />
+      </div>
+      <div>
+        <ChatWindow />
+      </div>
     </div>
   );
 }
