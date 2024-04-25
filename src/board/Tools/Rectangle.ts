@@ -1,7 +1,6 @@
 import Tools from ".";
 import { Pos } from "..";
 
-
 interface RectangleProps {
   pos: Pos;
   width: number;
@@ -24,29 +23,37 @@ export default class Rectangle implements Tools {
     this.mousePos = pos;
   }
   draw(ctx: CanvasRenderingContext2D): void {
-    ctx.beginPath();
-    for (let i = 0; i < this.rects.length; i++) {
-      let rect = this.rects[i];
-      ctx.rect(rect.pos.x, rect.pos.y, rect.width, rect.height);
-    }
+    try {
+      ctx.beginPath();
+      for (let i = 0; i < this.rects.length; i++) {
+        let rect = this.rects[i];
+        ctx.rect(rect.pos.x, rect.pos.y, rect.width, rect.height);
+      }
 
-    if (this.currentRectangle) {
-      ctx.rect(
-        this.currentRectangle.pos.x,
-        this.currentRectangle.pos.y,
-        this.currentRectangle.width,
-        this.currentRectangle.height
-      );
+      if (this.currentRectangle) {
+        ctx.rect(
+          this.currentRectangle.pos.x,
+          this.currentRectangle.pos.y,
+          this.currentRectangle.width,
+          this.currentRectangle.height
+        );
+      }
+      ctx.stroke();
+      ctx.closePath();
+    } catch (e) {
+      console.log("rect draw", e);
     }
-    ctx.stroke();
-    ctx.closePath();
   }
   update(): void {
-    if (this.currentRectangle) {
-      this.currentRectangle.width =
-        this.mousePos.x - this.currentRectangle.pos.x;
-      this.currentRectangle.height =
-        this.mousePos.y - this.currentRectangle.pos.y;
+    try {
+      if (this.currentRectangle) {
+        this.currentRectangle.width =
+          this.mousePos.x - this.currentRectangle.pos.x;
+        this.currentRectangle.height =
+          this.mousePos.y - this.currentRectangle.pos.y;
+      }
+    } catch (e) {
+      console.log("rect draw", e);
     }
   }
 }

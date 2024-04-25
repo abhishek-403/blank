@@ -5,14 +5,20 @@ import React, { useEffect } from "react";
 
 type Props = {};
 
+const board = new Board();
 export default function Canvas({}: Props) {
-    useEffect(() => {
+  useEffect(() => {
     const canvas: HTMLCanvasElement = document.querySelector("#canvas_id")!;
     if (!canvas) return;
 
-    let ctx = canvas.getContext("2d");
+    board.setDimensions({
+      left: canvas.offsetLeft,
+      top: canvas.offsetTop,
+      width: CANVAS_WIDTH,
+      height: CANVAS_HEIGHT,
+    });
 
-    const board = new Board();
+    let ctx = canvas.getContext("2d");
 
     const pencil_btn = document.getElementById("pencil_btn");
     const rect_btn = document.getElementById("rect_btn");
@@ -36,12 +42,19 @@ export default function Canvas({}: Props) {
     };
     loop();
     console.log("use effec");
-    
   }, []);
   return (
     <div className="flex ">
       <div className="">
-        <canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} className="border-2 border-black " id="canvas_id"></canvas>
+        <canvas
+          onMouseDown={(e) => board.mouseDown(e)}
+          onMouseUp={(e) => board.mouseUp(e)}
+          onMouseMove={(e) => board.mouseMove(e)}
+          width={CANVAS_WIDTH}
+          height={CANVAS_HEIGHT}
+          className="border-2 border-black "
+          id="canvas_id"
+        ></canvas>
         <button id="pencil_btn" className="text-red-500">
           Pencil
         </button>
