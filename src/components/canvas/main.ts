@@ -1,4 +1,3 @@
-"use client"
 import Board, { Tools } from "../../board";
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../constants";
 
