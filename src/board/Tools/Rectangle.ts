@@ -29,7 +29,7 @@ export default class Rectangle implements Tools {
         let rect = this.rects[i];
         ctx.rect(rect.pos.x, rect.pos.y, rect.width, rect.height);
       }
-
+      
       if (this.currentRectangle) {
         ctx.rect(
           this.currentRectangle.pos.x,

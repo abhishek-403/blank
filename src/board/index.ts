@@ -50,11 +50,10 @@ export default class Board {
     };
   }
   mouseUp(e: any) {
+    if(this.isMouseDown==false)return
     this.isMouseDown = false;
     this.rectangle.rects.push(this.rectangle.currentRectangle!);
     this.rectangle.currentRectangle = undefined;
-
-    console.log(this.mousePos);
   }
   mouseMove(e: any) {
     let x = e.clientX - this.leftOffset,
@@ -100,5 +99,4 @@ export default class Board {
     this.width = width;
     this.height = height;
   }
-
 }

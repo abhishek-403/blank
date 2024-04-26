@@ -32,8 +32,8 @@ const users: User = [
 export default function ParticipantsWindow({}: Props) {
   return (
     <div>
-      {users.map((user: EachUser) => (
-        <User {...user} />
+      {users.map((user: EachUser,i:number) => (
+        <User key={i} {...user} />
       ))}
     </div>
   );
