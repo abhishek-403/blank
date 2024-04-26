@@ -1,3 +1,4 @@
+import { STATE_CHANGE } from "@/components/canvas/Canvas";
 import Pencil from "./Tools/Pencil";
 import Rectangle from "./Tools/Rectangle";
 
@@ -17,7 +18,7 @@ export enum Tools {
   TRIANGLE,
   CIRCLE,
 }
-export default class Board {
+export default class Board extends EventTarget {
   paths: Pos[][] = [];
   mousePos: Pos = { x: 0, y: 0 };
   pencil = new Pencil();
@@ -31,6 +32,7 @@ export default class Board {
   isInBoard: boolean = false;
 
   constructor() {
+    super();
     this.paths = [];
   }
   mouseDown(e: any) {
@@ -50,7 +52,7 @@ export default class Board {
     };
   }
   mouseUp(e: any) {
-    if(this.isMouseDown==false)return
+    if (this.isMouseDown == false) return;
     this.isMouseDown = false;
     this.rectangle.rects.push(this.rectangle.currentRectangle!);
     this.rectangle.currentRectangle = undefined;
@@ -63,6 +65,8 @@ export default class Board {
       this.mouseUp(e);
       return;
     }
+
+    this.dispatchEvent(new Event(STATE_CHANGE));
 
     this.mousePos = { x, y };
     this.pencil.updateMousePos(this.mousePos);
@@ -99,4 +103,5 @@ export default class Board {
     this.width = width;
     this.height = height;
   }
+  initialCanvas() {}
 }

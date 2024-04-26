@@ -1,21 +1,56 @@
-import Canvas from "@/components/canvas/Canvas";
-import ChatWindow from "@/components/chats/ChatWindow";
-import ParticipantsWindow from "@/components/participants/ParticipantsWindow";
+"use client";
+import { redirect, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 type Props = {};
 
 export default function BoardScreen({}: Props) {
+  const router = useRouter();
+
+  async function createRoom() {
+    // if (!socket) return;
+    // socket.send(
+    //   JSON.stringify({
+    //     type: CREATE_ROOM,
+    //   })
+    // );
+    // if (!socket) return;
+    // socket.onmessage = (event) => {
+    //   const message = JSON.parse(event.data);
+
+    //   switch (message.type) {
+    //     case ROOM_CREATED:
+    //       console.log("roomId", message.payload.roomId);
+    //       router.replace(`/board/${message.payload.roomId}`);
+    //   }
+    // };
+
+    const data = await fetch("http://localhost:3001/createroom", {
+      method: "GET",
+    });
+
+    const res = await data.json();
+    console.log(res);
+    
+
+    router.replace(`/board/${res.roomId}`);
+  }
+
   return (
-    <div className="flex border-2 border-black overflow-auto w-full h-full gap-10 justify-center">
-      <div>
-        <ParticipantsWindow />
-      </div>
-      <div>
-        <Canvas />
-      </div>
-      <div>
-        <ChatWindow />
-      </div>
+    <div>
+      on board
+      <button onClick={createRoom}>share btn</button>
     </div>
+
+    // <div className="flex border-2 border-black overflow-auto w-full h-full gap-10 justify-center">
+    //   <div>
+    //     <ParticipantsWindow />
+    //   </div>
+    //   <div>
+    //   </div>
+    //   <div>
+    //     <ChatWindow />
+    //   </div>
+    // </div>
   );
 }
