@@ -29,6 +29,7 @@ export default class Pencil implements Tools {
       }
     } catch (e: any) {
       console.log("tools/pencil draw", e);
+      return 
     }
   }
 
@@ -38,6 +39,7 @@ export default class Pencil implements Tools {
         this.paths[this.paths.length - 1].push(this.mousePos);
     } catch (e: any) {
       console.log("tools/pencil update", e);
+      return 
     }
   }
 }

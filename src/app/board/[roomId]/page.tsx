@@ -1,11 +1,11 @@
 "use client";
 import Canvas, {
   JOIN_ROOM,
+  STATE_CHANGE,
   UPDATE_CANVAS,
   board,
 } from "@/components/canvas/Canvas";
 import { useSocket } from "@/hooks/useSocket";
-import { randomBytes, randomUUID } from "crypto";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -14,18 +14,39 @@ type Props = {};
 export default function SharedBoardScreen({}: Props) {
   const socket = useSocket();
   const params = useParams();
-  console.log("on roomshare board   ");
 
   useEffect(() => {
     if (!socket) {
       return;
     }
+    board.addEventListener(STATE_CHANGE, (e) => {
+      const state = {
+        pencil: board.pencil.paths,
+        rect: board.rectangle.rects,
+      };
+      console.log("statechanged ");
+
+      if (!socket) {
+        console.log("early return");
+        return;
+      }
+
+      socket.send(
+        JSON.stringify({
+          type: STATE_CHANGE,
+          payload: {
+            state,
+            roomId: params.roomId,
+          },
+        })
+      );
+    });
     socket.send(
       JSON.stringify({
         type: JOIN_ROOM,
         payload: {
           roomId: params.roomId,
-          userId: randomBytes(20),
+          userId: Math.random().toString(),
         },
       })
     );
@@ -35,10 +56,15 @@ export default function SharedBoardScreen({}: Props) {
 
       switch (message.type) {
         case UPDATE_CANVAS:
-          console.log("update");
-          board.pencil.paths = message.payload.updatedState.pencil.paths;
-          board.rectangle.rects = message.payload.updatedState.rectangle.rects;
+          console.log("update --");
+          board.pencil.paths = message.payload.updatedState.pencil;
+          board.rectangle.rects = message.payload.updatedState.rect;
       }
+    };
+    return () => {
+      board.removeEventListener(STATE_CHANGE, () => {
+        console.log("removed statechange listener");
+      });
     };
   }, [socket]);
 

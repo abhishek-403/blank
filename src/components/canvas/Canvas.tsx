@@ -18,12 +18,12 @@ interface RectangleProps {
   height: number;
 }
 type Props = {
-  socket: WebSocket | null;
+  socket: any;
 };
 export const JOIN_ROOM = "join_room";
 export const CREATE_ROOM = "create_room";
-export const STATE_CHANGE = "state_change";
 export const UPDATE_CANVAS = "update_canvas";
+export const STATE_CHANGE = "state_change";
 export const ROOM_CREATED = "room_created";
 
 export const board = new Board();
@@ -52,22 +52,28 @@ export default function Canvas({ socket }: Props) {
     const pencil_btn = document.getElementById("pencil_btn");
     const rect_btn = document.getElementById("rect_btn");
 
-    board.addEventListener(STATE_CHANGE, (e) => {
-      const state = {
-        pencil: board.pencil.paths,
-        rectangle: board.rectangle.rects,
-      };
+    // board.addEventListener(STATE_CHANGE, (e) => {
+    //   const state = {
+    //     pencil: board.pencil.paths,
+    //     rectangle: board.rectangle.rects,
+    //   };
+    //   console.log("statechanged ", state);
 
-      socket?.send(
-        JSON.stringify({
-          type: STATE_CHANGE,
-          payload: {
-            state,
-            roomId: params.roomId,
-          },
-        })
-      );
-    });
+    //   if (!socket) {
+    //     console.log("early return");
+    //     return;
+    //   }
+
+    //   socket.send(
+    //     JSON.stringify({
+    //       type: STATE_CHANGE,
+    //       payload: {
+    //         state,
+    //         roomId: params.roomId,
+    //       },
+    //     })
+    //   );
+    // });
 
     // if (!socket) return;
 
