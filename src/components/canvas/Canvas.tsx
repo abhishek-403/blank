@@ -2,7 +2,7 @@
 import Board, { Tools } from "@/board";
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "@/constants";
 import { redirect, useParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export type CanvasState = {
   pencil: Pos[][];
@@ -25,11 +25,12 @@ export const CREATE_ROOM = "create_room";
 export const UPDATE_CANVAS = "update_canvas";
 export const STATE_CHANGE = "state_change";
 export const ROOM_CREATED = "room_created";
-
-export const board = new Board();
+export const DRAWING_ON_CANVAS="drawing_on_board";
+export const newBoard = new Board(800, 600);
 
 export default function Canvas({ socket }: Props) {
-  const params = useParams();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [board, setBoard] = useState<any>();
   useEffect(() => {
     boardSetup();
 
@@ -37,55 +38,17 @@ export default function Canvas({ socket }: Props) {
   }, []);
 
   function boardSetup() {
-    const canvas: HTMLCanvasElement = document.querySelector("#canvas_id")!;
-    if (!canvas) return;
+    if (!canvasRef.current) return;
 
-    board.setDimensions({
-      left: canvas.offsetLeft,
-      top: canvas.offsetTop,
-      width: CANVAS_WIDTH,
-      height: CANVAS_HEIGHT,
-    });
-
-    let ctx = canvas.getContext("2d");
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      newBoard.setContext(ctx);
+      setBoard(newBoard);
+    }
 
     const pencil_btn = document.getElementById("pencil_btn");
     const rect_btn = document.getElementById("rect_btn");
-
-    // board.addEventListener(STATE_CHANGE, (e) => {
-    //   const state = {
-    //     pencil: board.pencil.paths,
-    //     rectangle: board.rectangle.rects,
-    //   };
-    //   console.log("statechanged ", state);
-
-    //   if (!socket) {
-    //     console.log("early return");
-    //     return;
-    //   }
-
-    //   socket.send(
-    //     JSON.stringify({
-    //       type: STATE_CHANGE,
-    //       payload: {
-    //         state,
-    //         roomId: params.roomId,
-    //       },
-    //     })
-    //   );
-    // });
-
-    // if (!socket) return;
-
-    // socket.onmessage = (event) => {
-    //   const message = JSON.parse(event.data);
-
-    //   switch (message.type) {
-    //     case UPDATE_CANVAS:
-    //       console.log("update");
-    //       message.payload.updatedState;
-    //   }
-    // };
 
     pencil_btn!.addEventListener("click", () => {
       board.setTool(Tools.PENCIL);
@@ -95,26 +58,36 @@ export default function Canvas({ socket }: Props) {
       board.setTool(Tools.RECTANGLE);
     });
 
-    const loop = () => {
-      if (ctx) {
-        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        board.draw(ctx);
-        board.update();
-      }
-
-      requestAnimationFrame(loop);
-    };
-    loop();
+ 
   }
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!board || !canvasRef.current) return;
+    const x = e.nativeEvent.offsetX;
+    const y = e.nativeEvent.offsetY;
+    board.handleMouseDown(x, y);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!board || !canvasRef.current) return;
+    const x = e.nativeEvent.offsetX;
+    const y = e.nativeEvent.offsetY;
+    board.handleMouseMove(x, y);
+  };
+
+  const handleMouseUp = () => {
+    if (!board) return;
+    board.handleMouseUp();
+  };
   return (
     <div className="flex ">
       <div className="">
         <canvas
-          onMouseDown={(e) => board.mouseDown(e)}
-          onMouseUp={(e) => board.mouseUp(e)}
-          onMouseMove={(e) => board.mouseMove(e)}
-          width={CANVAS_WIDTH}
-          height={CANVAS_HEIGHT}
+          ref={canvasRef}
+          width={400}
+          height={300}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
           className="border-2 border-black "
           id="canvas_id"
         ></canvas>

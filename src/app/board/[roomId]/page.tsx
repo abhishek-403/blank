@@ -1,12 +1,14 @@
 "use client";
 import Canvas, {
+  DRAWING_ON_CANVAS,
   JOIN_ROOM,
   STATE_CHANGE,
   UPDATE_CANVAS,
-  board,
+  newBoard as board,
 } from "@/components/canvas/Canvas";
 import { useSocket } from "@/hooks/useSocket";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 type Props = {};
@@ -14,22 +16,17 @@ type Props = {};
 export default function SharedBoardScreen({}: Props) {
   const socket = useSocket();
   const params = useParams();
+  const router = useRouter();
 
   useEffect(() => {
     if (!socket) {
       return;
     }
-    board.addEventListener(STATE_CHANGE, (e) => {
+    board.addEventListener(STATE_CHANGE, (e: any) => {
       const state = {
         pencil: board.pencil.paths,
-        rect: board.rectangle.rects,
+        rects: board.rectangle.rects,
       };
-      console.log("statechanged ");
-
-      if (!socket) {
-        console.log("early return");
-        return;
-      }
 
       socket.send(
         JSON.stringify({
@@ -41,6 +38,25 @@ export default function SharedBoardScreen({}: Props) {
         })
       );
     });
+    board.addEventListener(DRAWING_ON_CANVAS, (e: any) => {
+      const state = {
+        pencil: board.pencil.currLine,
+        rects: board.rectangle.rects,
+      };
+
+      console.log("string sent draw ", state.pencil.length);
+
+      socket.send(
+        JSON.stringify({
+          type: DRAWING_ON_CANVAS,
+          payload: {
+            state,
+            roomId: params.roomId,
+          },
+        })
+      );
+    });
+
     socket.send(
       JSON.stringify({
         type: JOIN_ROOM,
@@ -56,9 +72,17 @@ export default function SharedBoardScreen({}: Props) {
 
       switch (message.type) {
         case UPDATE_CANVAS:
-          console.log("update --");
-          board.pencil.paths = message.payload.updatedState.pencil;
-          board.rectangle.rects = message.payload.updatedState.rect;
+        
+          let state = message.payload.updatedState;
+          board.updateState(state);
+        case DRAWING_ON_CANVAS:
+          console.log("drawing --");
+          console.log(
+            "client received drawing--",
+            message.payload.drawingState
+          );
+          let s = message.payload.drawingState;
+          board.drawingOnBoard(s);
       }
     };
     return () => {
@@ -70,6 +94,7 @@ export default function SharedBoardScreen({}: Props) {
 
   return (
     <div className="m-4 border-2 border-red-300">
+      <button onClick={() => router.push("/board")}>back</button>
       <div className="p-4 border-2 border-black">Room page</div>
       <Canvas socket={socket} />
     </div>
