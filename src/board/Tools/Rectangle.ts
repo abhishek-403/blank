@@ -1,11 +1,11 @@
 import Tools from ".";
 import { Pos } from "..";
 
-export type RectangleProps= {
+export type RectangleProps = {
   pos: Pos;
   width: number;
   height: number;
-}
+};
 
 export default class Rectangle {
   stroke: number = 1;
@@ -20,25 +20,19 @@ export default class Rectangle {
     this.startX = 0;
     this.startY = 0;
   }
-  updateState(state: RectangleProps[]) {
-    this.rects= state;
-   
-    this.drawStoredRectangles();
-  }
   drawStoredRectangles() {
-    this.context?.beginPath();
     this.rects.forEach((rectangle) => {
-      this.context?.rect(
+      this.context?.strokeRect(
         rectangle.pos.x,
         rectangle.pos.y,
         rectangle.width,
         rectangle.height
       );
-
-      this.clearCanvas();
     });
-    this.context?.stroke();
-    this.context?.closePath();
+  }
+  updateState(state: RectangleProps[]) {
+    this.rects = state;
+    this.drawStoredRectangles();
   }
   handleMouseDown(x: number, y: number) {
     this.startX = x;
@@ -65,7 +59,6 @@ export default class Rectangle {
     const height = y - this.startY;
 
     this.clearCanvas();
-    this.drawStoredRectangles();
     this.context.strokeRect(this.startX, this.startY, width, height);
   }
 

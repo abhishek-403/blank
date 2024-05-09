@@ -70,12 +70,10 @@ export default function SharedBoardScreen({}: Props) {
 
       switch (message.type) {
         case UPDATE_CANVAS:
-          console.log("canvas updated");
           let state = message.payload.updatedState;
           board.updateState(state);
 
         case DRAWING_ON_CANVAS:
-          console.log("drawing --");
           let s = message.payload.drawingState;
           board.drawingOnBoard(s);
       }

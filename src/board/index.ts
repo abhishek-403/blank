@@ -78,7 +78,10 @@ export default class Board extends EventTarget {
       }
       if (this.activeTool == Tools.RECTANGLE) {
         this.rectangle.handleMouseMove(x, y);
-        this.dispatchEvent(new Event(DRAWING_ON_CANVAS));
+        this.updateState({
+          pencil: this.pencil.paths,
+          rects: this.rectangle.rects,
+        });
       }
     }
   }

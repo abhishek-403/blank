@@ -13,19 +13,7 @@ export default class Pencil {
     this.startX = 0;
     this.startY = 0;
   }
-
-  drawLine(x1: number, y1: number, x2: number, y2: number) {
-    if (!this.context) return;
-
-    this.context.beginPath();
-    this.context.moveTo(x1, y1);
-    this.context.lineTo(x2, y2);
-    this.context.strokeStyle = "black";
-    this.context.stroke();
-    this.context.closePath();
-  }
-  updateState(state: Pos[][]) {
-    this.paths = state;
+  drawStoredLines() {
     for (const path of this.paths) {
       if (path.length > 0 && this.context) {
         for (let i = 0; i < path.length - 1; i++) {
@@ -34,6 +22,23 @@ export default class Pencil {
       }
     }
   }
+  updateState(state: Pos[][]) {
+    this.paths = state;
+    this.drawStoredLines();
+  }
+
+  drawLine(x1: number, y1: number, x2: number, y2: number) {
+    if (!this.context) return;
+
+    this.context.beginPath();
+    this.context.moveTo(x1, y1);
+    this.context.lineTo(x2, y2);
+    this.context.strokeStyle = this.strokeColor;
+    this.context.lineWidth = this.stroke;
+    this.context.stroke();
+    this.context.closePath();
+  }
+
   drawingOnBoard(state: any) {
     if (!state) return;
 
@@ -55,9 +60,9 @@ export default class Pencil {
     this.currLine = [];
   }
   handleMouseMove(x: number, y: number) {
-      this.drawLine(this.startX, this.startY, x, y);
-      this.startX = x;
-      this.startY = y;
-      this.currLine.push({ x, y });   
+    this.drawLine(this.startX, this.startY, x, y);
+    this.startX = x;
+    this.startY = y;
+    this.currLine.push({ x, y });
   }
 }
