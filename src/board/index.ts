@@ -4,17 +4,11 @@ import {
   STATE_CHANGE,
 } from "@/components/canvas/Canvas";
 import Pencil from "./Tools/Pencil";
-import Rectangle from "./Tools/Rectangle";
+import Rectangle, { RectangleProps } from "./Tools/Rectangle";
 
-export interface Pos {
+export type Pos = {
   x: number;
   y: number;
-}
-type setboardProps = {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
 };
 export enum Tools {
   PENCIL,
@@ -22,21 +16,21 @@ export enum Tools {
   TRIANGLE,
   CIRCLE,
 }
+
+export type BoardPaths = {
+  pencil: Pos[][];
+  rectangle: RectangleProps[];
+};
+
 export default class Board extends EventTarget {
-  paths: Pos[][] = [];
+  paths: BoardPaths = { pencil: [], rectangle: [] };
   mousePos: Pos = { x: 0, y: 0 };
   pencil = new Pencil();
   rectangle = new Rectangle();
   activeTool: Tools = Tools.PENCIL;
-  leftOffset: number = 0;
-  topOffset: number = 0;
-  isMouseDown: boolean = false;
-  isInBoard: boolean = false;
+
   width: number;
   height: number;
-
-  private startX: number;
-  private startY: number;
   context: CanvasRenderingContext2D | null = null;
   private isDrawing: boolean = false;
 
@@ -44,71 +38,116 @@ export default class Board extends EventTarget {
     super();
     this.width = width;
     this.height = height;
-    this.paths = [];
-    this.startX = 0;
-    this.startY = 0;
   }
-  drawLine(x1: number, y1: number, x2: number, y2: number) {
-    if (!this.context) return;
 
-    this.context.beginPath();
-    this.context.moveTo(x1, y1);
-    this.context.lineTo(x2, y2);
-    this.context.strokeStyle = "black";
-    this.context.stroke();
-    this.context.closePath();
-  }
   updateState(state: CanvasState) {
-    this.pencil.paths = state.pencil;
-    for (const path of this.pencil.paths) {
-      if (path.length > 0 && this.context) {
-        for (let i = 0; i < path.length - 1; i++) {
-          this.drawLine(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
-        }
-      }
-    }
+    this.pencil.updateState(state.pencil);
+    this.rectangle.updateState(state.rects);
   }
   drawingOnBoard(state: any) {
-    console.log("state :", state?.pencil?.length);
-
     if (!state) return;
-
-    for (let i = 0; i < state.pencil.length - 1; i++) {
-      let path = state.pencil;
-
-
-      this.drawLine(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
-    }
+    this.pencil.drawingOnBoard(state);
   }
 
   handleMouseDown(x: number, y: number) {
     this.isDrawing = true;
     if (this.activeTool == Tools.PENCIL) {
-      this.startX = x;
-      this.startY = y;
-      this.pencil.currLine.push({ x, y });
+      this.pencil.handleMouseDown(x, y);
+    }
+    if (this.activeTool == Tools.RECTANGLE) {
+      this.rectangle.handleMouseDown(x, y);
     }
   }
 
-  handleMouseUp() {
+  handleMouseUp(x: number, y: number) {
     this.isDrawing = false;
     if (this.activeTool == Tools.PENCIL) {
-      this.pencil.paths.push(this.pencil.currLine);
+      this.pencil.handleMouseUp();
       this.dispatchEvent(new Event(STATE_CHANGE));
-      this.pencil.currLine = [];
+    }
+    if (this.activeTool == Tools.RECTANGLE) {
+      this.rectangle.handleMouseUp(x, y);
+      this.dispatchEvent(new Event(STATE_CHANGE));
     }
   }
   handleMouseMove(x: number, y: number) {
     if (this.isDrawing) {
-      this.drawLine(this.startX, this.startY, x, y);
-      this.startX = x;
-      this.startY = y;
-      this.pencil.currLine.push({ x, y });
-
-      this.dispatchEvent(new Event(DRAWING_ON_CANVAS));
+      if (this.activeTool == Tools.PENCIL) {
+        this.pencil.handleMouseMove(x, y);
+        this.dispatchEvent(new Event(DRAWING_ON_CANVAS));
+      }
+      if (this.activeTool == Tools.RECTANGLE) {
+        this.rectangle.handleMouseMove(x, y);
+        this.dispatchEvent(new Event(DRAWING_ON_CANVAS));
+      }
     }
   }
   setContext(context: CanvasRenderingContext2D) {
-    this.context = context;
+    // this.context = context;
+    this.pencil.context = context;
+    this.rectangle.context = context;
+  }
+  changeTool(tool: Tools) {
+    this.activeTool = tool;
+    console.log("tool changed", this.activeTool);
   }
 }
+
+// drawLine(x1: number, y1: number, x2: number, y2: number) {
+//   if (!this.context) return;
+
+//   this.context.beginPath();
+//   this.context.moveTo(x1, y1);
+//   this.context.lineTo(x2, y2);
+//   this.context.strokeStyle = "black";
+//   this.context.stroke();
+//   this.context.closePath();
+// }
+// updateState(state: CanvasState) {
+//   this.pencil.paths = state.pencil;
+//   for (const path of this.pencil.paths) {
+//     if (path.length > 0 && this.context) {
+//       for (let i = 0; i < path.length - 1; i++) {
+//         this.drawLine(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
+//       }
+//     }
+//   }
+// }
+// drawingOnBoard(state: any) {
+
+//   if (!state) return;
+
+//   for (let i = 0; i < state.pencil.length - 1; i++) {
+//     let path = state.pencil;
+
+//     this.drawLine(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
+//   }
+// }
+
+// handleMouseDown(x: number, y: number) {
+//   this.isDrawing = true;
+//   if (this.activeTool == Tools.PENCIL) {
+//     this.startX = x;
+//     this.startY = y;
+//     this.pencil.currLine.push({ x, y });
+//   }
+// }
+
+// handleMouseUp() {
+//   this.isDrawing = false;
+//   if (this.activeTool == Tools.PENCIL) {
+//     this.pencil.paths.push(this.pencil.currLine);
+//     this.dispatchEvent(new Event(STATE_CHANGE));
+//     this.pencil.currLine = [];
+//   }
+// }
+// handleMouseMove(x: number, y: number) {
+//   if (this.isDrawing) {
+//     this.drawLine(this.startX, this.startY, x, y);
+//     this.startX = x;
+//     this.startY = y;
+//     this.pencil.currLine.push({ x, y });
+
+//     this.dispatchEvent(new Event(DRAWING_ON_CANVAS));
+//   }
+// }

@@ -44,8 +44,6 @@ export default function SharedBoardScreen({}: Props) {
         rects: board.rectangle.rects,
       };
 
-      console.log("string sent draw ", state.pencil.length);
-
       socket.send(
         JSON.stringify({
           type: DRAWING_ON_CANVAS,
@@ -72,15 +70,12 @@ export default function SharedBoardScreen({}: Props) {
 
       switch (message.type) {
         case UPDATE_CANVAS:
-        
+          console.log("canvas updated");
           let state = message.payload.updatedState;
           board.updateState(state);
+
         case DRAWING_ON_CANVAS:
           console.log("drawing --");
-          console.log(
-            "client received drawing--",
-            message.payload.drawingState
-          );
           let s = message.payload.drawingState;
           board.drawingOnBoard(s);
       }

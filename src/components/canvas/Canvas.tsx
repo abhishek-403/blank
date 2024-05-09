@@ -25,11 +25,13 @@ export const CREATE_ROOM = "create_room";
 export const UPDATE_CANVAS = "update_canvas";
 export const STATE_CHANGE = "state_change";
 export const ROOM_CREATED = "room_created";
-export const DRAWING_ON_CANVAS="drawing_on_board";
+export const DRAWING_ON_CANVAS = "drawing_on_board";
 export const newBoard = new Board(800, 600);
 
 export default function Canvas({ socket }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pencilRef = useRef<HTMLButtonElement>(null);
+  const rectRef = useRef<HTMLButtonElement>(null);
   const [board, setBoard] = useState<any>();
   useEffect(() => {
     boardSetup();
@@ -47,18 +49,16 @@ export default function Canvas({ socket }: Props) {
       setBoard(newBoard);
     }
 
-    const pencil_btn = document.getElementById("pencil_btn");
-    const rect_btn = document.getElementById("rect_btn");
+    // const pencil_btn = document.getElementById("pencil_btn");
+    // const rect_btn = document.getElementById("rect_btn");
 
-    pencil_btn!.addEventListener("click", () => {
-      board.setTool(Tools.PENCIL);
-    });
+    // pencil_btn!.addEventListener("click", () => {
+    //   board.setTool(Tools.PENCIL);
+    // });
 
-    rect_btn!.addEventListener("click", () => {
-      board.setTool(Tools.RECTANGLE);
-    });
-
- 
+    // rect_btn!.addEventListener("click", () => {
+    //   board.setTool(Tools.RECTANGLE);
+    // });
   }
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!board || !canvasRef.current) return;
@@ -74,9 +74,11 @@ export default function Canvas({ socket }: Props) {
     board.handleMouseMove(x, y);
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!board) return;
-    board.handleMouseUp();
+    const x = e.nativeEvent.offsetX;
+    const y = e.nativeEvent.offsetY;
+    board.handleMouseUp(x, y);
   };
   return (
     <div className="flex ">
@@ -91,10 +93,19 @@ export default function Canvas({ socket }: Props) {
           className="border-2 border-black "
           id="canvas_id"
         ></canvas>
-        <button id="pencil_btn" className="text-red-500">
+        <button
+          onClick={() => board.changeTool(Tools.PENCIL)}
+          ref={pencilRef}
+          className="text-red-500"
+        >
           Pencil
         </button>
-        <button id="rect_btn">Rectangle</button>
+        <button
+          onClick={() => board.changeTool(Tools.RECTANGLE)}
+          ref={rectRef}
+        >
+          Rectangle
+        </button>
       </div>
     </div>
   );

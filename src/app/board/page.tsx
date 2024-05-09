@@ -8,22 +8,7 @@ export default function BoardScreen({}: Props) {
   const router = useRouter();
 
   async function createRoom() {
-    // if (!socket) return;
-    // socket.send(
-    //   JSON.stringify({
-    //     type: CREATE_ROOM,
-    //   })
-    // );
-    // if (!socket) return;
-    // socket.onmessage = (event) => {
-    //   const message = JSON.parse(event.data);
-
-    //   switch (message.type) {
-    //     case ROOM_CREATED:
-    //       console.log("roomId", message.payload.roomId);
-    //       router.replace(`/board/${message.payload.roomId}`);
-    //   }
-    // };
+    
 
     const data = await fetch("http://localhost:3001/createroom", {
       method: "GET",
