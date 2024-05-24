@@ -1,5 +1,6 @@
 "use client";
 import Canvas, {
+  CLEAR_CANVAS,
   DRAWING_ON_CANVAS,
   INIT_CANVAS,
   JOIN_ROOM,
@@ -23,65 +24,88 @@ export default function SharedBoardScreen({}: Props) {
     if (!socket) {
       return;
     }
-    board.addEventListener(STATE_CHANGE, (e: any) => {
-      const state = {
-        pencil: board.pencil.paths,
-        rects: board.rectangle.rects,
-      };
+    try {
+      if (socket.readyState != socket.OPEN) return;
+      board.addEventListener(STATE_CHANGE, (e: any) => {
+        const state = {
+          pencil: board.pencil.paths,
+          rects: board.rectangle.rects,
+        };
+
+        socket.send(
+          JSON.stringify({
+            type: STATE_CHANGE,
+            payload: {
+              state,
+              roomId: params.roomId,
+            },
+          })
+        );
+      });
+      board.addEventListener(DRAWING_ON_CANVAS, (e: any) => {
+        const state = {
+          pencil: board.pencil.currLine,
+          rects: board.rectangle.rects,
+        };
+
+        socket.send(
+          JSON.stringify({
+            type: DRAWING_ON_CANVAS,
+            payload: {
+              state,
+              roomId: params.roomId,
+            },
+          })
+        );
+      });
+      board.addEventListener(CLEAR_CANVAS, (e: any) => {
+        socket.send(
+          JSON.stringify({
+            type: CLEAR_CANVAS,
+            payload: {
+              roomId: params.roomId,
+            },
+          })
+        );
+      });
 
       socket.send(
         JSON.stringify({
-          type: STATE_CHANGE,
+          type: JOIN_ROOM,
           payload: {
-            state,
             roomId: params.roomId,
+            userId: Math.random().toString(),
           },
         })
       );
-    });
-    board.addEventListener(DRAWING_ON_CANVAS, (e: any) => {
-      const state = {
-        pencil: board.pencil.currLine,
-        rects: board.rectangle.rects,
+
+      socket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+
+        switch (message.type) {
+          case UPDATE_CANVAS:
+            let state = message.payload.updatedState;
+            board.updateState(state);
+            break;
+
+          case CLEAR_CANVAS:
+            board.clearCanvas();
+            break;
+
+          case INIT_CANVAS:
+            let ss = message.payload.updatedState;
+            board.updateState(ss);
+            break;
+
+          case DRAWING_ON_CANVAS:
+            let s = message.payload.drawingState;
+            board.drawingOnBoard(s);
+            break;
+        }
       };
-
-      socket.send(
-        JSON.stringify({
-          type: DRAWING_ON_CANVAS,
-          payload: {
-            state,
-            roomId: params.roomId,
-          },
-        })
-      );
-    });
-
-    socket.send(
-      JSON.stringify({
-        type: JOIN_ROOM,
-        payload: {
-          roomId: params.roomId,
-          userId: Math.random().toString(),
-        },
-      })
-    );
-
-    socket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-
-      switch (message.type) {
-        case UPDATE_CANVAS:
-          let state = message.payload.updatedState;
-          board.updateState(state);
-        case INIT_CANVAS:
-          let ss = message.payload.updatedState;
-          board.updateState(ss);
-
-        case DRAWING_ON_CANVAS:
-          let s = message.payload.drawingState;
-          board.drawingOnBoard(s);
-      }
-    };
+    } catch (e) {
+      console.log("e");
+    }
     return () => {
       board.removeEventListener(STATE_CHANGE, () => {
         console.log("removed statechange listener");

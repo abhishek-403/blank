@@ -22,7 +22,7 @@ export default class Pencil {
       }
     }
   }
-  updateState(state: Pos[][]) {
+  updateState(state: Pos[][]) {    
     this.paths = state;
     this.drawStoredLines();
   }
@@ -64,5 +64,9 @@ export default class Pencil {
     this.startX = x;
     this.startY = y;
     this.currLine.push({ x, y });
+  }
+  clean(){
+    this.paths = [];
+
   }
 }

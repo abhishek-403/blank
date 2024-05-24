@@ -65,4 +65,8 @@ export default class Rectangle {
   clearCanvas() {
     this.context?.clearRect(0, 0, 800, 600);
   }
+  clean(){
+    this.rects=[];
+    
+  }
 }

@@ -27,6 +27,7 @@ export const STATE_CHANGE = "state_change";
 export const ROOM_CREATED = "room_created";
 export const DRAWING_ON_CANVAS = "drawing_on_board";
 export const INIT_CANVAS = "init_canvas";
+export const CLEAR_CANVAS = "clear_canvas";
 export const newBoard = new Board(800, 600);
 
 export default function Canvas({ socket }: Props) {
@@ -101,14 +102,14 @@ export default function Canvas({ socket }: Props) {
         >
           Pencil
         </button>
-        <button
-          onClick={() => board.changeTool(Tools.RECTANGLE)}
-          ref={rectRef}
-        >
+        <button onClick={() => board.changeTool(Tools.RECTANGLE)} ref={rectRef}>
           Rectangle
         </button>
         <button
-          onClick={() => board.clearCanvas()}
+          onClick={() => {
+            board.clearCanvas();
+            board.dispatchClearCanvas();
+          }}
         >
           clear
         </button>

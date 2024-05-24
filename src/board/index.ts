@@ -1,4 +1,5 @@
 import {
+  CLEAR_CANVAS,
   CanvasState,
   DRAWING_ON_CANVAS,
   STATE_CHANGE,
@@ -86,7 +87,7 @@ export default class Board extends EventTarget {
     }
   }
   setContext(context: CanvasRenderingContext2D) {
-    // this.context = context;
+    this.context = context;
     this.pencil.context = context;
     this.rectangle.context = context;
   }
@@ -94,8 +95,18 @@ export default class Board extends EventTarget {
     this.activeTool = tool;
     console.log("tool changed", this.activeTool);
   }
-  clearCanvas(){
+  clearCanvas() {
+    this.pencil.clean();
+    this.rectangle.clean();
+    this.updateState({
+      pencil: [],
+      rects: [],
+    });
 
+    this.context?.clearRect(0, 0, this.width, this.height);
+  }
+  dispatchClearCanvas() {
+    this.dispatchEvent(new Event(CLEAR_CANVAS));
   }
 }
 
