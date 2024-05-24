@@ -9,6 +9,7 @@ import Canvas, {
   newBoard as board,
 } from "@/components/canvas/Canvas";
 import { useSocket } from "@/hooks/useSocket";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -26,48 +27,6 @@ export default function SharedBoardScreen({}: Props) {
     }
     try {
       if (socket.readyState != socket.OPEN) return;
-      board.addEventListener(STATE_CHANGE, (e: any) => {
-        const state = {
-          pencil: board.pencil.paths,
-          rects: board.rectangle.rects,
-        };
-
-        socket.send(
-          JSON.stringify({
-            type: STATE_CHANGE,
-            payload: {
-              state,
-              roomId: params.roomId,
-            },
-          })
-        );
-      });
-      board.addEventListener(DRAWING_ON_CANVAS, (e: any) => {
-        const state = {
-          pencil: board.pencil.currLine,
-          rects: board.rectangle.rects,
-        };
-
-        socket.send(
-          JSON.stringify({
-            type: DRAWING_ON_CANVAS,
-            payload: {
-              state,
-              roomId: params.roomId,
-            },
-          })
-        );
-      });
-      board.addEventListener(CLEAR_CANVAS, (e: any) => {
-        socket.send(
-          JSON.stringify({
-            type: CLEAR_CANVAS,
-            payload: {
-              roomId: params.roomId,
-            },
-          })
-        );
-      });
 
       socket.send(
         JSON.stringify({
@@ -78,38 +37,14 @@ export default function SharedBoardScreen({}: Props) {
           },
         })
       );
+      addAllListners(socket, params);
 
-      socket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-
-        switch (message.type) {
-          case UPDATE_CANVAS:
-            let state = message.payload.updatedState;
-            board.updateState(state);
-            break;
-
-          case CLEAR_CANVAS:
-            board.clearCanvas();
-            break;
-
-          case INIT_CANVAS:
-            let ss = message.payload.updatedState;
-            board.updateState(ss);
-            break;
-
-          case DRAWING_ON_CANVAS:
-            let s = message.payload.drawingState;
-            board.drawingOnBoard(s);
-            break;
-        }
-      };
+      listenSocketMessages(socket);
     } catch (e) {
       console.log("e");
     }
     return () => {
-      board.removeEventListener(STATE_CHANGE, () => {
-        console.log("removed statechange listener");
-      });
+      removeAllListeners();
     };
   }, [socket]);
 
@@ -120,4 +55,86 @@ export default function SharedBoardScreen({}: Props) {
       <Canvas socket={socket} />
     </div>
   );
+}
+function listenSocketMessages(socket: WebSocket) {
+  socket.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+
+    switch (message.type) {
+      case UPDATE_CANVAS:
+        let state = message.payload.updatedState;
+        board.updateState(state);
+        break;
+
+      case CLEAR_CANVAS:
+        board.clearCanvas();
+        break;
+
+      case INIT_CANVAS:
+        let ss = message.payload.updatedState;
+        board.updateState(ss);
+        break;
+
+      case DRAWING_ON_CANVAS:
+        let s = message.payload.drawingState;
+        board.drawingOnBoard(s);
+        break;
+    }
+  };
+}
+function addAllListners(socket: WebSocket, params: Params) {
+  board.addEventListener(STATE_CHANGE, (e: any) => {
+    const state = {
+      pencil: board.pencil.paths,
+      rects: board.rectangle.rects,
+    };
+
+    socket.send(
+      JSON.stringify({
+        type: STATE_CHANGE,
+        payload: {
+          state,
+          roomId: params.roomId,
+        },
+      })
+    );
+  });
+  board.addEventListener(DRAWING_ON_CANVAS, (e: any) => {
+    const state = {
+      pencil: board.pencil.currLine,
+      rects: board.rectangle.rects,
+    };
+
+    socket.send(
+      JSON.stringify({
+        type: DRAWING_ON_CANVAS,
+        payload: {
+          state,
+          roomId: params.roomId,
+        },
+      })
+    );
+  });
+  board.addEventListener(CLEAR_CANVAS, (e: any) => {
+    socket.send(
+      JSON.stringify({
+        type: CLEAR_CANVAS,
+        payload: {
+          roomId: params.roomId,
+        },
+      })
+    );
+  });
+}
+
+function removeAllListeners() {
+  board.removeEventListener(STATE_CHANGE, () => {
+    console.log("removed statechange listener");
+  });
+  board.removeEventListener(CLEAR_CANVAS, () => {
+    console.log("removed statechange listener");
+  });
+  board.removeEventListener(DRAWING_ON_CANVAS, () => {
+    console.log("removed statechange listener");
+  });
 }

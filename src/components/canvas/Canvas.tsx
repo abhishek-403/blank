@@ -51,16 +51,7 @@ export default function Canvas({ socket }: Props) {
       setBoard(newBoard);
     }
 
-    // const pencil_btn = document.getElementById("pencil_btn");
-    // const rect_btn = document.getElementById("rect_btn");
-
-    // pencil_btn!.addEventListener("click", () => {
-    //   board.setTool(Tools.PENCIL);
-    // });
-
-    // rect_btn!.addEventListener("click", () => {
-    //   board.setTool(Tools.RECTANGLE);
-    // });
+   
   }
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!board || !canvasRef.current) return;
