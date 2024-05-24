@@ -94,6 +94,9 @@ export default class Board extends EventTarget {
     this.activeTool = tool;
     console.log("tool changed", this.activeTool);
   }
+  clearCanvas(){
+
+  }
 }
 
 // drawLine(x1: number, y1: number, x2: number, y2: number) {

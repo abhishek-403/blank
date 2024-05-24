@@ -1,6 +1,7 @@
 "use client";
 import Canvas, {
   DRAWING_ON_CANVAS,
+  INIT_CANVAS,
   JOIN_ROOM,
   STATE_CHANGE,
   UPDATE_CANVAS,
@@ -72,6 +73,9 @@ export default function SharedBoardScreen({}: Props) {
         case UPDATE_CANVAS:
           let state = message.payload.updatedState;
           board.updateState(state);
+        case INIT_CANVAS:
+          let ss = message.payload.updatedState;
+          board.updateState(ss);
 
         case DRAWING_ON_CANVAS:
           let s = message.payload.drawingState;

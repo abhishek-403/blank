@@ -26,6 +26,7 @@ export const UPDATE_CANVAS = "update_canvas";
 export const STATE_CHANGE = "state_change";
 export const ROOM_CREATED = "room_created";
 export const DRAWING_ON_CANVAS = "drawing_on_board";
+export const INIT_CANVAS = "init_canvas";
 export const newBoard = new Board(800, 600);
 
 export default function Canvas({ socket }: Props) {
@@ -105,6 +106,11 @@ export default function Canvas({ socket }: Props) {
           ref={rectRef}
         >
           Rectangle
+        </button>
+        <button
+          onClick={() => board.clearCanvas()}
+        >
+          clear
         </button>
       </div>
     </div>
