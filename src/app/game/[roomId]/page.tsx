@@ -159,7 +159,7 @@ export default function GamePage() {
             <SharedBoardScreen socket={socket} />
           </div>
           <div>
-            <ChatWindow  />
+            <ChatWindow socket={socket}  />
           </div>
         </div>
       </div>

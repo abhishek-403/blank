@@ -1,45 +1,74 @@
-"use client"
+"use client";
 import React, { SetStateAction, useEffect, useState } from "react";
-import { CORRECT_ANSWER, SUBMIT_ANSWER, UPDATE_CANVAS, WRONG_ANSWER } from "../canvas/Canvas";
+import {
+  CORRECT_ANSWER,
+  SUBMIT_ANSWER,
+  UPDATE_CANVAS,
+  WRONG_ANSWER,
+} from "../canvas/Canvas";
 import { useSocket } from "@/hooks/useSocket";
 
-type Props = {};
+type Props = { socket: WebSocket | null };
+// type Props = {};
 
-export default function ChatWindow({}: Props) {
-  const socket = useSocket()
+export default function ChatWindow({ socket }: Props) {
+  // const socket = useSocket()
   const [chats, setChats] = useState<string[]>([]);
   const [input, setInput] = useState<string>("");
-  
-   useEffect(() => {
-     if (!socket) {
-       return;
-     }
-     try {
-       socket.send(
-         JSON.stringify({
-           type: SUBMIT_ANSWER,
-           payload: {
-             answer: input,
-           },
-         })
-       );
-       
-       listenSocketMessages(socket,setChats,chats);
-     } catch (e) {
-       console.log("e");
-     }
-   }, [socket]);
-  
+
+  //  useEffect(() => {
+
+  //    try {
+  //     //  socket!.send(
+  //     //    JSON.stringify({
+  //     //      type: SUBMIT_ANSWER,
+  //     //      payload: {
+  //     //        answer: input,
+  //     //      },
+  //     //    })
+  //     //  );
+
+  //      listenSocketMessages(socket,setChats,chats);
+  //    } catch (e) {
+  //      console.log("e");
+  //    }
+  //  }, [socket]);
+  useEffect(() => {
+    if (!socket) {
+      console.log("np");
+
+      return;
+    }
+
+    //  socket!.send(
+    //    JSON.stringify({
+    //      type: SUBMIT_ANSWER,
+    //      payload: {
+    //        answer: input,
+    //      },
+    //    })
+
+    listenSocketMessages(socket, setChats, chats);
+  }, []);
   function handleInputKeyDown(e: React.KeyboardEvent<HTMLElement>) {
     if (e.key == "Enter") submitAnswer();
   }
   async function submitAnswer() {
-    
-
     if (input) {
       setChats([...chats, input]);
+      socket?.send(
+        JSON.stringify({
+          type: SUBMIT_ANSWER,
+          payload: {
+            answer: input,
+          },
+        })
+      );
+
+      setInput("")
     }
   }
+
   return (
     <div>
       ChatWindow
@@ -70,19 +99,22 @@ export default function ChatWindow({}: Props) {
   );
 }
 
-
-function listenSocketMessages(socket: WebSocket|null,setChats:React.Dispatch<SetStateAction<string[]>>,chats:string[]) {
+function listenSocketMessages(
+  socket: WebSocket | null,
+  setChats: React.Dispatch<SetStateAction<string[]>>,
+  chats: string[]
+) {
   socket!.onmessage = (event) => {
     const message = JSON.parse(event.data);
 
     switch (message.type) {
       case CORRECT_ANSWER:
-        let newChat= message.payload.chats;
-        setChats([...chats,newChat])
+        let newChat = message.payload.chats;
+        setChats([...chats, newChat]);
         break;
-        case WRONG_ANSWER:
-          let s = message.payload.chats;
-          setChats([...chats,s])
+      case WRONG_ANSWER:
+        let s = message.payload.chats;
+        setChats([...chats, s]);
         break;
     }
   };
