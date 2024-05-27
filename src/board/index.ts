@@ -39,6 +39,7 @@ export default class Board extends EventTarget {
     super();
     this.width = width;
     this.height = height;
+    this.rectangle.intiCanvas(width,height)
   }
 
   updateState(state: CanvasState) {

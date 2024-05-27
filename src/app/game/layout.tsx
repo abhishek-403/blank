@@ -1,3 +1,23 @@
+// "use client"
+// import NavBar from "@/components/navbar/NavBar";
+// import { useSocket } from "@/hooks/useSocket";
+// import React from "react";
+
+// type Props = {
+//   children: React.ReactNode;
+// };
+
+// export default function layout({ children }: Props) {
+//   return (
+//     <div className="flex h-full flex-col gap-2">
+//       <NavBar />
+//         <div>
+//           {children}
+//         </div>
+//     </div>
+//   );
+// }
+
 import ChatWindow from "@/components/chats/ChatWindow";
 import ParticipantsWindow from "@/components/participants/ParticipantsWindow";
 import React from "react";
@@ -10,13 +30,13 @@ export default function layout({ children }: Props) {
   return (
     <div>
       <div className="flex border-2 border-black overflow-auto w-full h-full gap-10 justify-center">
-        {/* <div>
+        <div>
           <ParticipantsWindow />
-        </div> */}
+        </div>
         <div>{children}</div>
-        {/* <div>
+        <div>
           <ChatWindow />
-        </div> */}
+        </div>
       </div>
     </div>
   );

@@ -5,7 +5,9 @@ const WS_URL = "ws://localhost:8080";
 
 export const useSocket = () => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
-
+  // if (socket) {
+  //   return socket;
+  // }
   useEffect(() => {
     console.log("----useSocket used-----");
 

@@ -3,21 +3,29 @@ import Canvas, {
   CLEAR_CANVAS,
   DRAWING_ON_CANVAS,
   INIT_CANVAS,
+  INIT_USER,
   JOIN_ROOM,
   STATE_CHANGE,
   UPDATE_CANVAS,
   newBoard as board,
 } from "@/components/canvas/Canvas";
+import ChatWindow from "@/components/chats/ChatWindow";
+import ParticipantsWindow from "@/components/participants/ParticipantsWindow";
 import { useSocket } from "@/hooks/useSocket";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-type Props = {};
 
-export default function SharedBoardScreen({}: Props) {
-  const socket = useSocket();
+function isOpen(ws: WebSocket) {
+  return ws.readyState === ws.OPEN;
+}
+
+
+type Props = { socket: WebSocket | null };
+
+export default function SharedBoardScreen({ socket }: Props) {
   const params = useParams();
   const router = useRouter();
 
@@ -26,14 +34,21 @@ export default function SharedBoardScreen({}: Props) {
       return;
     }
     try {
-      if (socket.readyState != socket.OPEN) return;
-
+      if (!isOpen(socket)) return;
+      socket.send(
+        JSON.stringify({
+          type: INIT_USER,
+          payload: {
+            userId: Math.random().toString(12).substring(2, 9),
+            name: "test",
+          },
+        })
+      );
       socket.send(
         JSON.stringify({
           type: JOIN_ROOM,
           payload: {
             roomId: params.roomId,
-            userId: Math.random().toString(),
           },
         })
       );
@@ -50,7 +65,7 @@ export default function SharedBoardScreen({}: Props) {
 
   return (
     <div className="m-4 border-2 border-red-300">
-      <button onClick={() => router.push("/board")}>back</button>
+      <button onClick={() => router.push("/")}>back</button>
       <div className="p-4 border-2 border-black">Room page</div>
       <Canvas socket={socket} />
     </div>
@@ -61,6 +76,11 @@ function listenSocketMessages(socket: WebSocket) {
     const message = JSON.parse(event.data);
 
     switch (message.type) {
+      case DRAWING_ON_CANVAS:
+        let s = message.payload.drawingState;
+        board.drawingOnBoard(s);
+        break;
+
       case UPDATE_CANVAS:
         let state = message.payload.updatedState;
         board.updateState(state);
@@ -75,10 +95,6 @@ function listenSocketMessages(socket: WebSocket) {
         board.updateState(ss);
         break;
 
-      case DRAWING_ON_CANVAS:
-        let s = message.payload.drawingState;
-        board.drawingOnBoard(s);
-        break;
     }
   };
 }
@@ -104,6 +120,7 @@ function addAllListners(socket: WebSocket, params: Params) {
       pencil: board.pencil.currLine,
       rects: board.rectangle.rects,
     };
+    
 
     socket.send(
       JSON.stringify({

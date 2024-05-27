@@ -15,10 +15,15 @@ export default class Rectangle {
   currentRect?: RectangleProps;
   rects: RectangleProps[] = [];
   context: CanvasRenderingContext2D | null = null;
-
+  canvasWidth:number=0;
+  canvasHeight:number=0;
   constructor() {
     this.startX = 0;
     this.startY = 0;
+  }
+  intiCanvas(width:number,height:number){
+    this.canvasWidth= width;
+    this.canvasHeight= height;
   }
   drawStoredRectangles() {
     this.rects.forEach((rectangle) => {
@@ -63,7 +68,7 @@ export default class Rectangle {
   }
 
   clearCanvas() {
-    this.context?.clearRect(0, 0, 800, 600);
+    this.context?.clearRect(0, 0, this.canvasWidth,this.canvasHeight);
   }
   clean(){
     this.rects=[];
