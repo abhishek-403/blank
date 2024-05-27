@@ -144,10 +144,10 @@ import ChatWindow from "@/components/chats/ChatWindow";
 import ParticipantsWindow from "@/components/participants/ParticipantsWindow";
 import { useSocket } from "@/hooks/useSocket";
 import SharedBoardScreen from "../../../components/canvas/boardscreen";
+import { useParams } from "next/navigation";
 
 export default function GamePage() {
   const socket = useSocket();
-
   return (
     <div>
       <div className="flex h-full flex-col gap-2">
