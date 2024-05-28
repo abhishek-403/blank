@@ -1,54 +1,23 @@
 "use client";
-import React, { SetStateAction, useEffect, useRef, useState } from "react";
-import {
-  CORRECT_ANSWER,
-  SUBMIT_ANSWER,
-  UPDATE_CANVAS,
-  WRONG_ANSWER,
-} from "../canvas/Canvas";
-import { useSocket } from "@/hooks/useSocket";
+import { chat } from "@/app/game/[roomId]/page";
 import { useParams } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import { SUBMIT_ANSWER } from "../canvas/Canvas";
 
-type Props = { socket: WebSocket | null };
-// type Props = {};
-export class User {
-  public id: string;
-  public socket: WebSocket;
-  public name: string;
+type Props = { socket: WebSocket | null; chats: chat[] };
 
-  constructor(name: string, socket: WebSocket, userId: string) {
-    this.socket = socket;
-    this.id = userId;
-    this.name = name;
-  }
-}
-interface chat {
-  user: User;
-  message: string;
-}
-export default function ChatWindow({ socket }: Props) {
-  // const socket = useSocket()
+export default function ChatWindow({ socket, chats }: Props) {
   const params = useParams();
-
-  const [chats, setChats] = useState<chat[]>([]);
   const [input, setInput] = useState<string>("");
-
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
-  useEffect(() => {
-    if (!socket) {
-      return;
-    }
-
-    listenSocketMessages(socket, setChats, chats);
-  }, []);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   useEffect(() => {
     scrollToBottom();
   }, [chats]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   function handleInputKeyDown(e: React.KeyboardEvent<HTMLElement>) {
     if (e.key == "Enter") submitAnswer();
@@ -101,27 +70,4 @@ export default function ChatWindow({ socket }: Props) {
       </div>
     </div>
   );
-}
-
-function listenSocketMessages(
-  socket: WebSocket | null,
-  setChats: React.Dispatch<SetStateAction<chat[]>>,
-  chats: chat[]
-) {
-  if (!socket) return;
-
-  socket.onmessage = (event) => {
-    const message = JSON.parse(event.data);
-
-    switch (message.type) {
-      case CORRECT_ANSWER:
-        let newChat = message.payload.chats;
-        setChats([...chats, ...newChat]);
-        break;
-      case WRONG_ANSWER:
-        let s = message.payload.chats;
-        setChats([...chats, ...s]);
-        break;
-    }
-  };
 }
