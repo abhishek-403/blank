@@ -79,9 +79,9 @@ export default function GamePage() {
         JSON.stringify({
           type: JOIN_ROOM,
           payload: {
-            name,
             roomId: params.roomId,
-            userId,
+            // name,
+            // userId,
           },
         })
       );

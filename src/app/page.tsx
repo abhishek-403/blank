@@ -47,7 +47,7 @@ export default function Home() {
         value={name}
         onKeyDown={(e) => {
           if (e.key == "Enter") {
-            createRoom();
+            create?createRoom() :joinRoom();
           }
         }}
         placeholder="name"
