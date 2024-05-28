@@ -20,11 +20,9 @@ export const useSocket = () => {
     };
 
     return () => {
-      if (ws.readyState === 1) {
-        console.log("-----useSocket closed-----");
-
-        ws.close();
-      }
+      console.log("-----useSocket closed-----");
+      ws.close();
+      
     };
   }, []);
 

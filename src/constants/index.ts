@@ -18,4 +18,5 @@ export const SUBMIT_ANSWER = "submit_answer";
 export const CORRECT_ANSWER = "correct_answer";
 export const WRONG_ANSWER = "wrong_answer";
 export const GAME_CLOCK = "game_clock";
+export const GAME_OVER = "game_over";
 

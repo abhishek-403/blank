@@ -18,9 +18,10 @@ import ChatWindow from "@/components/chats/ChatWindow";
 import ParticipantsWindow from "@/components/participants/ParticipantsWindow";
 import { useSocket } from "@/hooks/useSocket";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
 import NavBar from "@/components/navbar/NavBar";
+import useMount from "@/hooks/useMount";
 export class User {
   public id: string;
   public socket: WebSocket;
@@ -40,23 +41,37 @@ export interface chat {
 export default function GamePage() {
   const socket = useSocket();
   const params = useParams();
+  const router = useRouter();
+  const searchparam = useSearchParams();
 
   const [chats, setChats] = useState<chat[]>([]);
-  const [clock,setClock] = useState<number>(0);
-  const [word,setWord] = useState<string>("_ _ _ _");
+  const [clock, setClock] = useState<number>(0);
+  const [word, setWord] = useState<string>("_ _ _ _");
 
+  let name = searchparam.get("name");
+  useEffect(() => {
+
+    if (!name) {
+      let prevId = params.roomId;
+      if(!prevId){
+        router.replace('/')
+      }
+      router.replace(`/?prevId=${prevId}`);
+    }
+  }, [name]);
   useEffect(() => {
     if (!socket) {
       return;
     }
     try {
       if (!isOpen(socket)) return;
+      let userId = Math.random().toString(12).substring(2, 9);
       socket.send(
         JSON.stringify({
           type: INIT_USER,
           payload: {
-            userId: Math.random().toString(12).substring(2, 9),
-            name: "test",
+            userId,
+            name,
           },
         })
       );
@@ -64,13 +79,15 @@ export default function GamePage() {
         JSON.stringify({
           type: JOIN_ROOM,
           payload: {
+            name,
             roomId: params.roomId,
+            userId,
           },
         })
       );
 
       addAllListners(socket, params);
-      listenSocketMessages(socket, setChats, chats,setClock);
+      listenSocketMessages(socket, setChats, chats, setClock);
     } catch (e) {
       console.log("e");
     }
@@ -78,6 +95,7 @@ export default function GamePage() {
       removeAllListeners();
     };
   }, [socket]);
+  
   return (
     <div>
       <div className="flex h-full flex-col gap-2 ">
@@ -144,7 +162,6 @@ function listenSocketMessages(
         setChats(message.payload.chats);
         break;
       case GAME_CLOCK:
-        console.log(message.payload.time);
         setClock(message.payload.time);
         break;
     }
