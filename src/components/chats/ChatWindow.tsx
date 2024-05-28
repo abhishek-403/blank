@@ -2,7 +2,7 @@
 import { chat } from "@/app/game/[roomId]/page";
 import { useParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import { SUBMIT_ANSWER } from "../canvas/Canvas";
+import { SUBMIT_ANSWER } from "@/constants";
 
 type Props = { socket: WebSocket | null; chats: chat[] };
 

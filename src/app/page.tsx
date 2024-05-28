@@ -10,17 +10,12 @@ export default function Home() {
 
   async function createRoom() {
     if (!name) return;
-    // if(url){
-    // router.replace(url)
-    // return
-
-    // }
+    
     const data = await axios.post("http://localhost:3001/createroom", {
       format: { rounds: 3, duration: 150, maxParticipants: 5 },
     });
 
     const res = data.data;
-    console.log(res);
     router.replace(`/game/${res.roomId}`);
   }
 

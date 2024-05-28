@@ -1,9 +1,5 @@
-import {
-  CLEAR_CANVAS,
-  CanvasState,
-  DRAWING_ON_CANVAS,
-  STATE_CHANGE,
-} from "@/components/canvas/Canvas";
+import { CLEAR_CANVAS, DRAWING_ON_CANVAS, STATE_CHANGE } from "@/constants";
+import { CanvasState } from "@/components/canvas/Canvas";
 import Pencil from "./Tools/Pencil";
 import Rectangle, { RectangleProps } from "./Tools/Rectangle";
 
@@ -39,7 +35,7 @@ export default class Board extends EventTarget {
     super();
     this.width = width;
     this.height = height;
-    this.rectangle.intiCanvas(width,height)
+    this.rectangle.intiCanvas(width, height);
   }
 
   updateState(state: CanvasState) {

@@ -5,12 +5,13 @@ import {
   DRAWING_ON_CANVAS,
   INIT_CANVAS,
   INIT_USER,
+  INTI_CHAT,
   JOIN_ROOM,
   STATE_CHANGE,
   UPDATE_CANVAS,
   WRONG_ANSWER,
-  newBoard as board,
-} from "@/components/canvas/Canvas";
+} from "@/constants";
+import { newBoard as board } from "@/components/canvas/Canvas";
 import SharedBoardScreen from "@/components/canvas/boardscreen";
 import ChatWindow from "@/components/chats/ChatWindow";
 import ParticipantsWindow from "@/components/participants/ParticipantsWindow";
@@ -107,13 +108,11 @@ function listenSocketMessages(
 
     switch (message.type) {
       case DRAWING_ON_CANVAS:
-        let s = message.payload.drawingState;
-        board.drawingOnBoard(s);
+        board.drawingOnBoard(message.payload.drawingStat);
         break;
 
       case UPDATE_CANVAS:
-        let state = message.payload.updatedState;
-        board.updateState(state);
+        board.updateState(message.payload.updatedState);
         break;
 
       case CLEAR_CANVAS:
@@ -121,8 +120,7 @@ function listenSocketMessages(
         break;
 
       case INIT_CANVAS:
-        let ss = message.payload.updatedState;
-        board.updateState(ss);
+        board.updateState(message.payload.updatedState);
         break;
 
       case CORRECT_ANSWER:
@@ -132,6 +130,11 @@ function listenSocketMessages(
       case WRONG_ANSWER:
         let sa = message.payload.chats;
         setChats([...chats, ...sa]);
+        break;
+
+      case INTI_CHAT:
+        
+        setChats(message.payload.chats)
         break;
     }
   };
