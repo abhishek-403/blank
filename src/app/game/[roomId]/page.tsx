@@ -3,6 +3,7 @@ import {
   CLEAR_CANVAS,
   CORRECT_ANSWER,
   DRAWING_ON_CANVAS,
+  GAME_CLOCK,
   INIT_CANVAS,
   INIT_USER,
   INTI_CHAT,
@@ -19,6 +20,7 @@ import { useSocket } from "@/hooks/useSocket";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useParams } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
+import NavBar from "@/components/navbar/NavBar";
 export class User {
   public id: string;
   public socket: WebSocket;
@@ -40,6 +42,8 @@ export default function GamePage() {
   const params = useParams();
 
   const [chats, setChats] = useState<chat[]>([]);
+  const [clock,setClock] = useState<number>(0);
+  const [word,setWord] = useState<string>("_ _ _ _");
 
   useEffect(() => {
     if (!socket) {
@@ -66,7 +70,7 @@ export default function GamePage() {
       );
 
       addAllListners(socket, params);
-      listenSocketMessages(socket, setChats, chats);
+      listenSocketMessages(socket, setChats, chats,setClock);
     } catch (e) {
       console.log("e");
     }
@@ -76,7 +80,10 @@ export default function GamePage() {
   }, [socket]);
   return (
     <div>
-      <div className="flex h-full flex-col gap-2">
+      <div className="flex h-full flex-col gap-2 ">
+        <div>
+          <NavBar clock={clock} word={word} />
+        </div>
         <div className="flex  overflow-auto w-full h-[100%] gap-10 justify-center">
           <div>
             <ParticipantsWindow />
@@ -100,7 +107,8 @@ function isOpen(ws: WebSocket) {
 function listenSocketMessages(
   socket: WebSocket | null,
   setChats: React.Dispatch<SetStateAction<chat[]>>,
-  chats: chat[]
+  chats: chat[],
+  setClock: React.Dispatch<SetStateAction<number>>
 ) {
   if (!socket) return;
   socket.onmessage = (event) => {
@@ -133,8 +141,11 @@ function listenSocketMessages(
         break;
 
       case INTI_CHAT:
-        
-        setChats(message.payload.chats)
+        setChats(message.payload.chats);
+        break;
+      case GAME_CLOCK:
+        console.log(message.payload.time);
+        setClock(message.payload.time);
         break;
     }
   };
