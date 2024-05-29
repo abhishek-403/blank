@@ -36,9 +36,9 @@ function User({ name, points, rank, hasGuessedCurLap }: EachUser) {
   return (
     <div
       className="flex gap-2 justify-center border-2 "
-      style={{ backgroundColor: hasGuessedCurLap ? "green" : "white" }}
+      style={{ backgroundColor: hasGuessedCurLap ? "yellow" : "white" }}
     >
-      <div className="flex justify-center item-center text-lg">#{rank}</div>
+      <div className="flex justify-center item-center text-lg">#{rank==0?1:rank}</div>
       <div className="flex items-center flex-col justify-center">
         <div>{name}</div>
         <div>{points}</div>

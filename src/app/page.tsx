@@ -14,7 +14,7 @@ export default function Home() {
     if (!name) return;
 
     const data = await axios.post("http://localhost:3001/createroom", {
-      format: { rounds: 3, duration: { time: 30 }, maxParticipants: 5 },
+      format: { rounds: 3, duration: { time: 80 }, maxParticipants: 5 },
     });
 
     const res = data.data;
