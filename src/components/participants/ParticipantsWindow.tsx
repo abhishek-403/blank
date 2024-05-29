@@ -1,6 +1,7 @@
+import { Player } from "@/app/game/[roomId]/page";
 import React from "react";
 
-type Props = {};
+type Props = { standings: Player[] | undefined };
 type User = {
   name: string;
   points: number;
@@ -10,39 +11,34 @@ type EachUser = {
   name: string;
   points: number;
   rank: number;
+  hasGuessedCurLap: boolean;
 };
 
-const users: User = [
-  {
-    name: "Abhishek",
-    points: 100,
-    rank: 1,
-  },
-  {
-    name: "Abhishek",
-    points: 100,
-    rank: 1,
-  },
-  {
-    name: "Abhishek",
-    points: 100,
-    rank: 1,
-  },
-];
-export default function ParticipantsWindow({}: Props) {
+
+export default function ParticipantsWindow({ standings }: Props) {
   return (
     <div>
-      {users.map((user: EachUser,i:number) => (
-        <User key={i} {...user} />
-      ))}
+      {standings?.map((u, i) => {
+        let user = {
+          name: u.user.name,
+          rank: u.rank,
+          hasGuessedCurLap: u.hasGuessedCurLap,
+          points: u.points,
+        };
+
+        return <User key={i} {...user} />;
+      })}
     </div>
   );
 }
 
-function User({ name, points, rank }: EachUser) {
+function User({ name, points, rank, hasGuessedCurLap }: EachUser) {
   return (
-    <div className="flex gap-2 justify-center ">
-      <div className="flex justify-center item-center">{rank}</div>
+    <div
+      className="flex gap-2 justify-center border-2 "
+      style={{ backgroundColor: hasGuessedCurLap ? "green" : "white" }}
+    >
+      <div className="flex justify-center item-center text-lg">#{rank}</div>
       <div className="flex items-center flex-col justify-center">
         <div>{name}</div>
         <div>{points}</div>

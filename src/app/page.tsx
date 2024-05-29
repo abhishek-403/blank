@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const router = useRouter();
-  const params = useParams();
   const searchparams =useSearchParams();
   const [name, setName] = useState<string>("");
   const [roomId, setRoomId] = useState<string|null>("");

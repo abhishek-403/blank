@@ -1,12 +1,16 @@
 "use client";
-import { chat } from "@/app/game/[roomId]/page";
+import { Player, chat } from "@/app/game/[roomId]/page";
 import { useParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { SUBMIT_ANSWER } from "@/constants";
 
-type Props = { socket: WebSocket | null; chats: chat[] };
+type Props = {
+  socket: WebSocket | null;
+  chats: chat[];
+  player: Player | undefined;
+};
 
-export default function ChatWindow({ socket, chats }: Props) {
+export default function ChatWindow({ socket, chats, player }: Props) {
   const params = useParams();
   const [input, setInput] = useState<string>("");
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
@@ -15,18 +19,19 @@ export default function ChatWindow({ socket, chats }: Props) {
     scrollToBottom();
   }, [chats]);
 
+  
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
+  
   function handleInputKeyDown(e: React.KeyboardEvent<HTMLElement>) {
     if (e.key == "Enter") submitAnswer();
   }
-
+  
   async function submitAnswer() {
     if (input) {
       if (!socket) return;
-
+      
       socket.send(
         JSON.stringify({
           type: SUBMIT_ANSWER,
@@ -36,11 +41,11 @@ export default function ChatWindow({ socket, chats }: Props) {
           },
         })
       );
-
+      
       setInput("");
     }
   }
-
+  
   return (
     <div>
       ChatWindow
@@ -48,9 +53,10 @@ export default function ChatWindow({ socket, chats }: Props) {
         <div className="w-full mt-auto mb-8  overflow-y-auto ">
           {chats.map((e, i) => {
             return (
-              <p className="text-base w-full" key={i}>
-                {e.message}
-              </p>
+              <div key={i} className="flex gap-2  w-full">
+                <p className="text-extrabold ">{`${e.user.name} :`}</p>
+                <p className="text-base">{e.message}</p>
+              </div>
             );
           })}
           <div ref={messagesEndRef}></div>
@@ -63,6 +69,7 @@ export default function ChatWindow({ socket, chats }: Props) {
             type="text"
             name=""
             id=""
+            disabled={player?.hasGuessedCurLap}
             className="border-2"
           />
           <button onClick={submitAnswer}>Submit</button>

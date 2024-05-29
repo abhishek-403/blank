@@ -2,14 +2,17 @@
 import {
   CLEAR_CANVAS,
   CORRECT_ANSWER,
+  DISABLE_INPUT,
   DRAWING_ON_CANVAS,
   GAME_CLOCK,
   INIT_CANVAS,
+  INIT_GAME,
   INIT_USER,
   INTI_CHAT,
   JOIN_ROOM,
   STATE_CHANGE,
   UPDATE_CANVAS,
+  UPDATE_STANDINGS,
   WRONG_ANSWER,
 } from "@/constants";
 import { newBoard as board } from "@/components/canvas/Canvas";
@@ -21,7 +24,7 @@ import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
 import NavBar from "@/components/navbar/NavBar";
-import useMount from "@/hooks/useMount";
+
 export class User {
   public id: string;
   public socket: WebSocket;
@@ -37,6 +40,12 @@ export interface chat {
   user: User;
   message: string;
 }
+export interface Player {
+  user: User;
+  points: number;
+  rank: number;
+  hasGuessedCurLap: boolean;
+}
 
 export default function GamePage() {
   const socket = useSocket();
@@ -46,20 +55,25 @@ export default function GamePage() {
 
   const [chats, setChats] = useState<chat[]>([]);
   const [clock, setClock] = useState<number>(0);
+  const [player, setPlayer] = useState<Player | undefined>();
+  const [standings, setStandings] = useState<Player[]>();
   const [word, setWord] = useState<string>("_ _ _ _");
 
   let name = searchparam.get("name");
   useEffect(() => {
+    console.log("useee");
 
     if (!name) {
       let prevId = params.roomId;
-      if(!prevId){
-        router.replace('/')
+      if (!prevId) {
+        router.replace("/");
       }
       router.replace(`/?prevId=${prevId}`);
     }
   }, [name]);
   useEffect(() => {
+    console.log("usefdee");
+
     if (!socket) {
       return;
     }
@@ -80,14 +94,12 @@ export default function GamePage() {
           type: JOIN_ROOM,
           payload: {
             roomId: params.roomId,
-            // name,
-            // userId,
           },
         })
       );
 
       addAllListners(socket, params);
-      listenSocketMessages(socket, setChats, chats, setClock);
+      listenSocketMessages(socket, setChats, setClock, setStandings, setPlayer);
     } catch (e) {
       console.log("e");
     }
@@ -95,7 +107,7 @@ export default function GamePage() {
       removeAllListeners();
     };
   }, [socket]);
-  
+
   return (
     <div>
       <div className="flex h-full flex-col gap-2 ">
@@ -104,13 +116,19 @@ export default function GamePage() {
         </div>
         <div className="flex  overflow-auto w-full h-[100%] gap-10 justify-center">
           <div>
-            <ParticipantsWindow />
+            <ParticipantsWindow standings={standings} />
           </div>
           <div>
             <SharedBoardScreen socket={socket} />
+            <input
+              type="text"
+              value={window.location.href}
+              className="w-full"
+              readOnly
+            />
           </div>
           <div>
-            <ChatWindow socket={socket} chats={chats} />
+            <ChatWindow socket={socket} chats={chats} player={player} />
           </div>
         </div>
       </div>
@@ -125,14 +143,50 @@ function isOpen(ws: WebSocket) {
 function listenSocketMessages(
   socket: WebSocket | null,
   setChats: React.Dispatch<SetStateAction<chat[]>>,
-  chats: chat[],
-  setClock: React.Dispatch<SetStateAction<number>>
+  setClock: React.Dispatch<SetStateAction<number>>,
+  setStandings: React.Dispatch<SetStateAction<Player[] | undefined>>,
+  setPlayer: React.Dispatch<SetStateAction<Player | undefined>>
 ) {
   if (!socket) return;
   socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
 
     switch (message.type) {
+      //game events
+
+      case INIT_GAME:
+        board.updateState(message.payload.updatedState);
+        setChats(message.payload.chats);
+        setStandings(message.payload.standings);
+        break;
+
+      case INIT_USER:
+        setPlayer(message.payload.player);
+        break;
+
+      case DISABLE_INPUT:        
+        //@ts-ignore
+        setPlayer((prev) => ({ ...prev, hasGuessedCurLap: true }));
+        break;
+
+      case CORRECT_ANSWER:
+        setChats(message.payload.chats);
+
+        break;
+      case WRONG_ANSWER:
+        setChats(message.payload.chats);
+        break;
+
+     
+      case GAME_CLOCK:
+        setClock(message.payload.time);
+        break;
+      case UPDATE_STANDINGS:
+        setStandings(message.payload.standings);
+        break;
+
+      // canvas
+
       case DRAWING_ON_CANVAS:
         board.drawingOnBoard(message.payload.drawingStat);
         break;
@@ -145,25 +199,7 @@ function listenSocketMessages(
         board.clearCanvas();
         break;
 
-      case INIT_CANVAS:
-        board.updateState(message.payload.updatedState);
-        break;
-
-      case CORRECT_ANSWER:
-        let newChat = message.payload.chats;
-        setChats([...chats, ...newChat]);
-        break;
-      case WRONG_ANSWER:
-        let sa = message.payload.chats;
-        setChats([...chats, ...sa]);
-        break;
-
-      case INTI_CHAT:
-        setChats(message.payload.chats);
-        break;
-      case GAME_CLOCK:
-        setClock(message.payload.time);
-        break;
+     
     }
   };
 }
