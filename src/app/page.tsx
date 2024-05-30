@@ -5,17 +5,15 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const router = useRouter();
-  const searchparams =useSearchParams();
+  const searchparams = useSearchParams();
   const [name, setName] = useState<string>("");
-  const [roomId, setRoomId] = useState<string|null>("");
+  const [roomId, setRoomId] = useState<string | null>("");
   const [create, setCreate] = useState<boolean>(true);
 
   async function createRoom() {
     if (!name) return;
 
-    const data = await axios.post("http://localhost:3001/createroom", {
-      format: { rounds: 3, duration: { time: 80 }, maxParticipants: 5 },
-    });
+    const data = await axios.post("http://localhost:3001/createroom");
 
     const res = data.data;
     router.replace(`/game/${res.roomId}/?name=${name}`);
@@ -31,10 +29,9 @@ export default function Home() {
   }
 
   useEffect(() => {
-    
-    if (searchparams.get('prevId')) {
+    if (searchparams.get("prevId")) {
       setCreate(false);
-      setRoomId(searchparams.get('prevId'))
+      setRoomId(searchparams.get("prevId"));
     }
   }, [searchparams]);
 
@@ -46,7 +43,7 @@ export default function Home() {
         value={name}
         onKeyDown={(e) => {
           if (e.key == "Enter") {
-            create?createRoom() :joinRoom();
+            create ? createRoom() : joinRoom();
           }
         }}
         placeholder="name"

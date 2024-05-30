@@ -4,14 +4,19 @@ import {
   CORRECT_ANSWER,
   DISABLE_INPUT,
   DRAWING_ON_CANVAS,
+  ENABLE_INPUT,
+  ERROR,
   GAME_CLOCK,
   INIT_CANVAS,
   INIT_GAME,
+  INIT_ROOM,
   INIT_USER,
   INTI_CHAT,
   JOIN_ROOM,
+  START_GAME,
   STATE_CHANGE,
   UPDATE_CANVAS,
+  UPDATE_GAME_STAGE,
   UPDATE_STANDINGS,
   WRONG_ANSWER,
 } from "@/constants";
@@ -45,6 +50,19 @@ export interface Player {
   points: number;
   rank: number;
   hasGuessedCurLap: boolean;
+  isTurnPlayer: boolean;
+  isRoomAdmin: boolean;
+}
+export enum GAME_STAGE {
+  LOBBY,
+  END,
+  ONGOING,
+  WAITING,
+  NA,
+}
+export interface RoundData {
+  totalRounds: number;
+  curRound: number;
 }
 
 export default function GamePage() {
@@ -57,7 +75,16 @@ export default function GamePage() {
   const [clock, setClock] = useState<number>(0);
   const [player, setPlayer] = useState<Player | undefined>();
   const [standings, setStandings] = useState<Player[]>();
-  const [word, setWord] = useState<string>("_ _ _ _");
+  const [word, setWord] = useState<string>("house");
+  const [error, setError] = useState<string | undefined>();
+  const [gameStage, setGameStage] = useState<GAME_STAGE>(GAME_STAGE.NA);
+  const [roundData, setRoundData] = useState<RoundData>({
+    totalRounds: 0,
+    curRound: 0,
+  });
+
+  const [totalRound, setTotalRound] = useState<number>(1);
+  const [time, setTime] = useState<number>(20);
 
   let name = searchparam.get("name");
   useEffect(() => {
@@ -99,7 +126,16 @@ export default function GamePage() {
       );
 
       addAllListners(socket, params);
-      listenSocketMessages(socket, setChats, setClock, setStandings, setPlayer);
+      listenSocketMessages(
+        socket,
+        setChats,
+        setClock,
+        setStandings,
+        setPlayer,
+        setError,
+        setGameStage,
+        setRoundData
+      );
     } catch (e) {
       console.log("e");
     }
@@ -108,11 +144,49 @@ export default function GamePage() {
     };
   }, [socket]);
 
+  useEffect(() => {
+    console.log("errooor", error);
+  }, [error]);
+
+  function startGame() {
+    if (!socket) return;
+
+    socket.send(
+      JSON.stringify({
+        type: INIT_ROOM,
+        payload: {
+          roomId: params.roomId,
+          format: {
+            duration: { time: time },
+            rounds: totalRound,
+          },
+        },
+      })
+    );
+    socket.send(
+      JSON.stringify({
+        type: START_GAME,
+        payload: {
+          player,
+          roomId: params.roomId,
+        },
+      })
+    );
+  }
+
+  // useEffect(() => {
+  //   console.log("player", player);
+  // }, [player]);
   return (
     <div>
       <div className="flex h-full flex-col gap-2 ">
         <div>
-          <NavBar clock={clock} word={word} />
+          <NavBar
+            roundData={roundData}
+            clock={clock}
+            word={word}
+            player={player}
+          />
         </div>
         <div className="flex  overflow-auto w-full h-[100%] gap-10 justify-center">
           <div>
@@ -122,10 +196,15 @@ export default function GamePage() {
             <SharedBoardScreen socket={socket} />
             <input
               type="text"
-              value={window.location.href}
+              value={window?.location.href}
               className="w-full"
               readOnly
             />
+            <div>
+              {player?.isRoomAdmin && (
+                <button onClick={startGame}>Start</button>
+              )}
+            </div>
           </div>
           <div>
             <ChatWindow socket={socket} chats={chats} player={player} />
@@ -145,7 +224,10 @@ function listenSocketMessages(
   setChats: React.Dispatch<SetStateAction<chat[]>>,
   setClock: React.Dispatch<SetStateAction<number>>,
   setStandings: React.Dispatch<SetStateAction<Player[] | undefined>>,
-  setPlayer: React.Dispatch<SetStateAction<Player | undefined>>
+  setPlayer: React.Dispatch<SetStateAction<Player | undefined>>,
+  setError: React.Dispatch<SetStateAction<string | undefined>>,
+  setGameStage: React.Dispatch<SetStateAction<GAME_STAGE>>,
+  setRoundData: React.Dispatch<SetStateAction<RoundData>>
 ) {
   if (!socket) return;
   socket.onmessage = (event) => {
@@ -164,9 +246,16 @@ function listenSocketMessages(
         setPlayer(message.payload.player);
         break;
 
-      case DISABLE_INPUT:        
+      case DISABLE_INPUT:
         //@ts-ignore
         setPlayer((prev) => ({ ...prev, hasGuessedCurLap: true }));
+        break;
+      case ENABLE_INPUT:
+        console.log("enable input",message.payload.player);
+        
+        // setPlayer(message.payload.player);
+        //@ts-ignore
+        setPlayer((prev) => ({ ...prev, hasGuessedCurLap: false }));
         break;
 
       case CORRECT_ANSWER:
@@ -177,12 +266,21 @@ function listenSocketMessages(
         setChats(message.payload.chats);
         break;
 
-     
       case GAME_CLOCK:
         setClock(message.payload.time);
         break;
       case UPDATE_STANDINGS:
         setStandings(message.payload.standings);
+        break;
+
+      case ERROR:
+        setError(message.payload.message);
+        break;
+
+      case UPDATE_GAME_STAGE:
+        setRoundData(message.payload.room);
+        setPlayer(message.payload.player);
+        setGameStage(message.payload.gameStage);
         break;
 
       // canvas
@@ -198,8 +296,6 @@ function listenSocketMessages(
       case CLEAR_CANVAS:
         board.clearCanvas();
         break;
-
-     
     }
   };
 }

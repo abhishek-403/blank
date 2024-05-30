@@ -18,20 +18,20 @@ export default function ChatWindow({ socket, chats, player }: Props) {
   useEffect(() => {
     scrollToBottom();
   }, [chats]);
+  console.log("turn", player?.isTurnPlayer, "input", player?.hasGuessedCurLap);
 
-  
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-  
+
   function handleInputKeyDown(e: React.KeyboardEvent<HTMLElement>) {
     if (e.key == "Enter") submitAnswer();
   }
-  
+
   async function submitAnswer() {
     if (input) {
       if (!socket) return;
-      
+
       socket.send(
         JSON.stringify({
           type: SUBMIT_ANSWER,
@@ -41,11 +41,11 @@ export default function ChatWindow({ socket, chats, player }: Props) {
           },
         })
       );
-      
+
       setInput("");
     }
   }
-  
+
   return (
     <div>
       ChatWindow
@@ -67,9 +67,7 @@ export default function ChatWindow({ socket, chats, player }: Props) {
             onKeyDown={handleInputKeyDown}
             onChange={(e) => setInput(e.target.value)}
             type="text"
-            name=""
-            id=""
-            disabled={player?.hasGuessedCurLap}
+            disabled={player?.isTurnPlayer || player?.hasGuessedCurLap}
             className="border-2"
           />
           <button onClick={submitAnswer}>Submit</button>

@@ -1,6 +1,5 @@
 export const CANVAS_WIDTH =800;
 export const CANVAS_HEIGHT =500;
-
 // room messages
 export const JOIN_ROOM ="join_room"
 export const CREATE_ROOM = "create_room";
@@ -13,6 +12,11 @@ export const INIT_USER = "init_user";
 export const CLEAR_CANVAS = "clear_canvas";
 export const INTI_CHAT = "inti_chat";
 
+// general messages
+export const ERROR = "error";
+
+
+
 // game messages
 export const SUBMIT_ANSWER = "submit_answer";
 export const CORRECT_ANSWER = "correct_answer";
@@ -21,4 +25,8 @@ export const GAME_CLOCK = "game_clock";
 export const GAME_OVER = "game_over";
 export const UPDATE_STANDINGS = "update_standings";
 export const DISABLE_INPUT = "disable_input";
+export const ENABLE_INPUT = "enable_input";
 export const INIT_GAME = "init_game";
+export const START_GAME = "start_game";
+export const INIT_ROOM = "init_room";
+export const UPDATE_GAME_STAGE = "update_game_stage";
