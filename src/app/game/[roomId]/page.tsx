@@ -98,6 +98,7 @@ export default function GamePage() {
       router.replace(`/?prevId=${prevId}`);
     }
   }, [name]);
+
   useEffect(() => {
     console.log("usefdee");
 
@@ -251,9 +252,6 @@ function listenSocketMessages(
         setPlayer((prev) => ({ ...prev, hasGuessedCurLap: true }));
         break;
       case ENABLE_INPUT:
-        console.log("enable input",message.payload.player);
-        
-        // setPlayer(message.payload.player);
         //@ts-ignore
         setPlayer((prev) => ({ ...prev, hasGuessedCurLap: false }));
         break;

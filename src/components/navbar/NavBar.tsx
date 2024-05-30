@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 type Props = { roundData:RoundData,clock: number; word: string; player: Player | undefined };
 
 export default function NavBar({ roundData,clock, word, player }: Props) {
-  // console.log("turn ", player?.isTurnPlayer);
 
   return (
     <div className="flex item-center justify-around border-2">

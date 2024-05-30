@@ -18,7 +18,6 @@ export default function ChatWindow({ socket, chats, player }: Props) {
   useEffect(() => {
     scrollToBottom();
   }, [chats]);
-  console.log("turn", player?.isTurnPlayer, "input", player?.hasGuessedCurLap);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
