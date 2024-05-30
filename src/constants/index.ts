@@ -30,3 +30,6 @@ export const INIT_GAME = "init_game";
 export const START_GAME = "start_game";
 export const INIT_ROOM = "init_room";
 export const UPDATE_GAME_STAGE = "update_game_stage";
+export const CHOOSE_WORD = "choose_word";
+export const WORD_CHOOSEN = "word_choosen";
+export const WAIT_CLOCK = "wait_clock";

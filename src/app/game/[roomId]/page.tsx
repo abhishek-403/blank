@@ -1,5 +1,6 @@
 "use client";
 import {
+  CHOOSE_WORD,
   CLEAR_CANVAS,
   CORRECT_ANSWER,
   DISABLE_INPUT,
@@ -18,6 +19,7 @@ import {
   UPDATE_CANVAS,
   UPDATE_GAME_STAGE,
   UPDATE_STANDINGS,
+  WAIT_CLOCK,
   WRONG_ANSWER,
 } from "@/constants";
 import { newBoard as board } from "@/components/canvas/Canvas";
@@ -82,22 +84,38 @@ export default function GamePage() {
     totalRounds: 0,
     curRound: 0,
   });
-
+  const [wordList, setWordList] = useState<string[]>([""]);
+  const [isLayOver, setIsLayOver] = useState<boolean>(
+    gameStage === GAME_STAGE.WAITING
+  );
   const [totalRound, setTotalRound] = useState<number>(1);
   const [time, setTime] = useState<number>(20);
 
-  let name = searchparam.get("name");
-  useEffect(() => {
-    console.log("useee");
+  function startGame() {
+    if (!socket) return;
 
-    if (!name) {
-      let prevId = params.roomId;
-      if (!prevId) {
-        router.replace("/");
-      }
-      router.replace(`/?prevId=${prevId}`);
-    }
-  }, [name]);
+    socket.send(
+      JSON.stringify({
+        type: INIT_ROOM,
+        payload: {
+          roomId: params.roomId,
+          format: {
+            duration: { time: time },
+            rounds: totalRound,
+          },
+        },
+      })
+    );
+    socket.send(
+      JSON.stringify({
+        type: START_GAME,
+        payload: {
+          player,
+          roomId: params.roomId,
+        },
+      })
+    );
+  }
 
   useEffect(() => {
     console.log("usefdee");
@@ -135,7 +153,8 @@ export default function GamePage() {
         setPlayer,
         setError,
         setGameStage,
-        setRoundData
+        setRoundData,
+        setWordList
       );
     } catch (e) {
       console.log("e");
@@ -145,35 +164,28 @@ export default function GamePage() {
     };
   }, [socket]);
 
+  let name = searchparam.get("name");
   useEffect(() => {
+    console.log("useee");
+
+    if (!name) {
+      let prevId = params.roomId;
+      if (!prevId) {
+        router.replace("/");
+      }
+      router.replace(`/?prevId=${prevId}`);
+    }
+  }, [name]);
+
+  useEffect(() => {
+    setIsLayOver(gameStage===GAME_STAGE.WAITING)
+  }, [gameStage]);
+
+  useEffect(() => {
+    if (!player) return;
+    chats.push({ user: player.user, message: error! });
     console.log("errooor", error);
   }, [error]);
-
-  function startGame() {
-    if (!socket) return;
-
-    socket.send(
-      JSON.stringify({
-        type: INIT_ROOM,
-        payload: {
-          roomId: params.roomId,
-          format: {
-            duration: { time: time },
-            rounds: totalRound,
-          },
-        },
-      })
-    );
-    socket.send(
-      JSON.stringify({
-        type: START_GAME,
-        payload: {
-          player,
-          roomId: params.roomId,
-        },
-      })
-    );
-  }
 
   // useEffect(() => {
   //   console.log("player", player);
@@ -194,7 +206,12 @@ export default function GamePage() {
             <ParticipantsWindow standings={standings} />
           </div>
           <div>
-            <SharedBoardScreen socket={socket} player={player} />
+            <SharedBoardScreen
+              isLayOver={isLayOver}
+              wordList={wordList}
+              player={player}
+              socket={socket}
+            />
             <input
               type="text"
               value={window?.location.href}
@@ -228,7 +245,8 @@ function listenSocketMessages(
   setPlayer: React.Dispatch<SetStateAction<Player | undefined>>,
   setError: React.Dispatch<SetStateAction<string | undefined>>,
   setGameStage: React.Dispatch<SetStateAction<GAME_STAGE>>,
-  setRoundData: React.Dispatch<SetStateAction<RoundData>>
+  setRoundData: React.Dispatch<SetStateAction<RoundData>>,
+  setWordList: React.Dispatch<SetStateAction<string[]>>
 ) {
   if (!socket) return;
   socket.onmessage = (event) => {
@@ -267,6 +285,9 @@ function listenSocketMessages(
       case GAME_CLOCK:
         setClock(message.payload.time);
         break;
+      case WAIT_CLOCK:
+        setClock(message.payload.waitTime);
+        break;
       case UPDATE_STANDINGS:
         setStandings(message.payload.standings);
         break;
@@ -279,6 +300,10 @@ function listenSocketMessages(
         setRoundData(message.payload.room);
         setPlayer(message.payload.player);
         setGameStage(message.payload.gameStage);
+        break;
+
+      case CHOOSE_WORD:
+        setWordList(message.payload.wordList);
         break;
 
       // canvas
