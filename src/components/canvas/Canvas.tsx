@@ -18,13 +18,12 @@ interface RectangleProps {
   height: number;
 }
 type Props = {
-  socket: any;
+  isDisabled: boolean;
 };
-
 
 export const newBoard = new Board(CANVAS_WIDTH, CANVAS_HEIGHT);
 
-export default function Canvas({ socket }: Props) {
+export default function Canvas({ isDisabled }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pencilRef = useRef<HTMLButtonElement>(null);
   const rectRef = useRef<HTMLButtonElement>(null);
@@ -44,8 +43,6 @@ export default function Canvas({ socket }: Props) {
       newBoard.setContext(ctx);
       setBoard(newBoard);
     }
-
-   
   }
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!board || !canvasRef.current) return;
@@ -70,34 +67,43 @@ export default function Canvas({ socket }: Props) {
   return (
     <div className="flex ">
       <div className="">
-        <canvas
-          ref={canvasRef}
-          width={CANVAS_WIDTH}
-          height={CANVAS_HEIGHT}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          className="border-2 border-black "
-          id="canvas_id"
-        ></canvas>
-        <button
-          onClick={() => board.changeTool(Tools.PENCIL)}
-          ref={pencilRef}
-          className="text-red-500"
-        >
-          Pencil
-        </button>
-        <button onClick={() => board.changeTool(Tools.RECTANGLE)} ref={rectRef}>
-          Rectangle
-        </button>
-        <button
-          onClick={() => {
-            board.clearCanvas();
-            board.dispatchClearCanvas();
-          }}
-        >
-          clear
-        </button>
+        <div className="relative w-[100%]">
+          
+          <canvas
+            ref={canvasRef}
+            width={CANVAS_WIDTH}
+            height={CANVAS_HEIGHT}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            className="border-2 border-black z-1"
+            id="canvas_id"
+          ></canvas>
+        </div>
+
+        <div style={{ display: isDisabled ? "block" : "none" }}>
+          <button
+            onClick={() => board.changeTool(Tools.PENCIL)}
+            ref={pencilRef}
+            className="text-red-500"
+          >
+            Pencil
+          </button>
+          <button
+            onClick={() => board.changeTool(Tools.RECTANGLE)}
+            ref={rectRef}
+          >
+            Rectangle
+          </button>
+          <button
+            onClick={() => {
+              board.clearCanvas();
+              board.dispatchClearCanvas();
+            }}
+          >
+            clear
+          </button>
+        </div>
       </div>
     </div>
   );

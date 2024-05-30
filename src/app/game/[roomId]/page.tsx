@@ -194,7 +194,7 @@ export default function GamePage() {
             <ParticipantsWindow standings={standings} />
           </div>
           <div>
-            <SharedBoardScreen socket={socket} />
+            <SharedBoardScreen socket={socket} player={player} />
             <input
               type="text"
               value={window?.location.href}
