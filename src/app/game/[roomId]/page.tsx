@@ -14,6 +14,7 @@ import {
   INIT_USER,
   INTI_CHAT,
   JOIN_ROOM,
+  SET_CHOOSEN_WORD,
   START_GAME,
   STATE_CHANGE,
   UPDATE_CANVAS,
@@ -77,7 +78,7 @@ export default function GamePage() {
   const [clock, setClock] = useState<number>(0);
   const [player, setPlayer] = useState<Player | undefined>();
   const [standings, setStandings] = useState<Player[]>();
-  const [word, setWord] = useState<string>("house");
+  const [word, setWord] = useState<string>("");
   const [error, setError] = useState<string | undefined>();
   const [gameStage, setGameStage] = useState<GAME_STAGE>(GAME_STAGE.NA);
   const [roundData, setRoundData] = useState<RoundData>({
@@ -85,7 +86,7 @@ export default function GamePage() {
     curRound: 0,
   });
   const [wordList, setWordList] = useState<string[]>([""]);
- 
+
   const [totalRound, setTotalRound] = useState<number>(1);
   const [time, setTime] = useState<number>(20);
 
@@ -152,7 +153,8 @@ export default function GamePage() {
         setError,
         setGameStage,
         setRoundData,
-        setWordList
+        setWordList,
+        setWord
       );
     } catch (e) {
       console.log("e");
@@ -175,8 +177,6 @@ export default function GamePage() {
     }
   }, [name]);
 
- 
-
   useEffect(() => {
     if (!player) return;
     chats.push({ user: player.user, message: error! });
@@ -195,6 +195,7 @@ export default function GamePage() {
             clock={clock}
             word={word}
             player={player}
+            gameStage={gameStage}
           />
         </div>
         <div className="flex  overflow-auto w-full h-[100%] gap-10 justify-center">
@@ -203,6 +204,7 @@ export default function GamePage() {
           </div>
           <div>
             <SharedBoardScreen
+              setWord={setWord}
               gameStage={gameStage}
               wordList={wordList}
               player={player}
@@ -243,7 +245,8 @@ function listenSocketMessages(
   setError: React.Dispatch<SetStateAction<string | undefined>>,
   setGameStage: React.Dispatch<SetStateAction<GAME_STAGE>>,
   setRoundData: React.Dispatch<SetStateAction<RoundData>>,
-  setWordList: React.Dispatch<SetStateAction<string[]>>
+  setWordList: React.Dispatch<SetStateAction<string[]>>,
+  setWord: React.Dispatch<SetStateAction<string>>
 ) {
   if (!socket) return;
   socket.onmessage = (event) => {
@@ -301,6 +304,9 @@ function listenSocketMessages(
 
       case CHOOSE_WORD:
         setWordList(message.payload.wordList);
+        break;
+      case SET_CHOOSEN_WORD:
+        setWord(message.payload.word);
         break;
 
       // canvas

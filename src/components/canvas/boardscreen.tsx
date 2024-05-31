@@ -3,22 +3,23 @@ import { GAME_STAGE, Player } from "@/app/game/[roomId]/page";
 import Canvas from "@/components/canvas/Canvas";
 import { WORD_CHOOSEN } from "@/constants";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 
 type Props = {
   wordList: string[];
   player: Player | undefined;
   socket: WebSocket | null;
   gameStage: GAME_STAGE;
-  standings: Player[] | undefined;
+  standings: Player[] | undefined;  
+  setWord: React.Dispatch<SetStateAction<string>>
 };
-// let words2 = ["house", "table", "lamp"];
 export default function SharedBoardScreen({
   wordList,
   player,
   socket,
   gameStage,
   standings,
+  setWord
 }: Props) {
   const router = useRouter();
   const params = useParams();
@@ -27,9 +28,9 @@ export default function SharedBoardScreen({
   );
 
   useEffect(() => {
+    console.log(player?.isTurnPlayer);
     if (!player) return;
     setIsDisabled(!player.isTurnPlayer);
-    console.log(player.isTurnPlayer);
   }, [player]);
 
   function wordSelected(i: number) {
@@ -37,6 +38,7 @@ export default function SharedBoardScreen({
       console.log("not player");
       return;
     }
+    setWord(wordList[i]);
     socket.send(
       JSON.stringify({
         type: WORD_CHOOSEN,
@@ -53,14 +55,8 @@ export default function SharedBoardScreen({
       <button onClick={() => router.push("/")}>back</button>
       <div className="p-4 border-2 border-black">Room page</div>
       <div className="relative w-[100%]">
-        <Canvas isDisabled={isDisabled} />
+        <Canvas isDisabled={isDisabled} />        
         <div
-          id="overlay"
-          style={{ display: isDisabled ? "block" : "none" }}
-          className="absolute z-2 bg-transparent h-full w-full top-0 left-0"
-        ></div>
-        <div
-          // style={{ display: "flex" }}
           style={{
             display:
               gameStage === GAME_STAGE.WAITING || gameStage === GAME_STAGE.END

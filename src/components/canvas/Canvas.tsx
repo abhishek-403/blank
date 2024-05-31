@@ -68,7 +68,6 @@ export default function Canvas({ isDisabled }: Props) {
     <div className="flex ">
       <div className="">
         <div className="relative w-[100%]">
-          
           <canvas
             ref={canvasRef}
             width={CANVAS_WIDTH}
@@ -79,6 +78,11 @@ export default function Canvas({ isDisabled }: Props) {
             className="border-2 border-black z-1"
             id="canvas_id"
           ></canvas>
+          <div
+            id="overlay"
+            style={{ display: isDisabled ? "block" : "none" }}
+            className="absolute z-2 bg-transparent h-full w-full top-0 left-0"
+          ></div>
         </div>
 
         <div style={{ display: isDisabled ? "none" : "block" }}>

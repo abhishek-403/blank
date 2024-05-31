@@ -33,3 +33,4 @@ export const UPDATE_GAME_STAGE = "update_game_stage";
 export const CHOOSE_WORD = "choose_word";
 export const WORD_CHOOSEN = "word_choosen";
 export const WAIT_CLOCK = "wait_clock";
+export const SET_CHOOSEN_WORD = "set_choosen_word";
