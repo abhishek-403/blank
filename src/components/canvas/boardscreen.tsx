@@ -1,7 +1,7 @@
 "use client";
 import { GAME_STAGE, Player } from "@/app/game/[roomId]/page";
 import Canvas from "@/components/canvas/Canvas";
-import { INIT_ROOM, START_GAME, WORD_CHOOSEN } from "@/constants";
+import { INIT_ROOM, RESTART_GAME, START_GAME, UPDATE_GAME_STAGE, WORD_CHOOSEN } from "@/constants";
 import { useParams, useRouter } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
 
@@ -80,7 +80,12 @@ export default function SharedBoardScreen({
           className="absolute z-2   h-full w-full top-0 left-0 items-center justify-center"
         >
           {gameStage === GAME_STAGE.END ? (
-            <EndScreen standings={standings} />
+            <EndScreen
+              roomId={params.roomId}
+              standings={standings}
+              isRoomAdmin={player?.isRoomAdmin}
+              socket={socket}
+            />
           ) : (
             <div>
               {player?.isTurnPlayer ? (
@@ -109,22 +114,56 @@ export default function SharedBoardScreen({
 }
 type EndScreenProps = {
   standings: Player[] | undefined;
+  isRoomAdmin: boolean | undefined;
+  socket: WebSocket | null;
+  roomId: string|string[];
 };
-function EndScreen({ standings }: EndScreenProps) {
+function EndScreen({ standings, isRoomAdmin, socket, roomId }: EndScreenProps) {
   if (!standings) return;
+
+  function restart() {
+    socket?.send(
+      JSON.stringify({
+        type: RESTART_GAME,
+        payload: {
+          roomId,
+        },
+      })
+    );
+  }
+  function toHome() {
+    socket?.send(JSON.stringify({
+      type:UPDATE_GAME_STAGE,
+      payload:{
+        gameStage:GAME_STAGE.LOBBY,
+        roomId,
+        message:RESTART_GAME
+      }
+    }))
+
+    
+    console.log("gameStage");
+    
+  }
   return (
-    <div className="flex flex-col gap-4 overflow-auto">
-      {standings.map((user) => {
-        return (
-          <div className="flex flex-col items-center border-2 ">
-            <div className="flex gap-1 text-xl">
-              <strong>#{user.rank}</strong>
-              <p className="capitalize">{user.user.name}</p>
+    <div>
+      <div className="flex flex-col gap-4 overflow-auto">
+        {standings.map((user) => {
+          return (
+            <div className="flex flex-col items-center border-2 ">
+              <div className="flex gap-1 text-xl">
+                <strong>#{user.rank}</strong>
+                <p className="capitalize">{user.user.name}</p>
+              </div>
+              <p>{user.points}</p>
             </div>
-            <p>{user.points}</p>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
+      <div>
+        {isRoomAdmin && <button onClick={toHome}>Home</button>}
+        {isRoomAdmin && <button onClick={restart}>Restart</button>}
+      </div>
     </div>
   );
 }
@@ -132,7 +171,7 @@ function EndScreen({ standings }: EndScreenProps) {
 const generateOptions = () => {
   let timeOptions = [];
   const roundOptions: number[] = [1, 2, 3, 4, 5];
-  for (let i = 30; i <= 120; i += 15) {
+  for (let i = 15; i <= 120; i += 15) {
     timeOptions.push(i);
   }
   return { timeOptions, roundOptions };
@@ -157,6 +196,8 @@ function GameSettings({
 
   function startGame() {
     if (!socket) return;
+    console.log("Start");
+    
 
     socket.send(
       JSON.stringify({
@@ -235,7 +276,7 @@ function GameSettings({
           </select>
         </div>
       </div>
-      <div>{<button onClick={startGame}>Start</button>}</div>
+      <div>{isRoomAdmin && <button onClick={startGame}>Start</button>}</div>
     </div>
   );
 }

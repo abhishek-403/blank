@@ -14,7 +14,7 @@ import {
   INIT_USER,
   INTI_CHAT,
   JOIN_ROOM,
-  SET_CHOOSEN_WORD,
+  DISPLAY_CHOOSEN_WORD,
   START_GAME,
   STATE_CHANGE,
   UPDATE_CANVAS,
@@ -179,8 +179,6 @@ export default function GamePage() {
               className="w-full"
               readOnly
             /> */}
-            
-            
           </div>
           <div>
             <ChatWindow socket={socket} chats={chats} player={player} />
@@ -190,8 +188,6 @@ export default function GamePage() {
     </div>
   );
 }
-
-
 
 function isOpen(ws: WebSocket) {
   return ws.readyState === ws.OPEN;
@@ -266,7 +262,7 @@ function listenSocketMessages(
       case CHOOSE_WORD:
         setWordList(message.payload.wordList);
         break;
-      case SET_CHOOSEN_WORD:
+      case DISPLAY_CHOOSEN_WORD:
         setWord(message.payload.word);
         break;
 

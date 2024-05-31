@@ -67,6 +67,7 @@ export default function ChatWindow({ socket, chats, player }: Props) {
             onChange={(e) => setInput(e.target.value)}
             type="text"
             disabled={player?.isTurnPlayer || player?.hasGuessedCurLap}
+            autoFocus
             className="border-2"
           />
           <button onClick={submitAnswer}>Submit</button>
