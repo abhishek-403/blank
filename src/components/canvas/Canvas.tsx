@@ -81,7 +81,7 @@ export default function Canvas({ isDisabled }: Props) {
           ></canvas>
         </div>
 
-        <div style={{ display: isDisabled ? "block" : "none" }}>
+        <div style={{ display: isDisabled ? "none" : "block" }}>
           <button
             onClick={() => board.changeTool(Tools.PENCIL)}
             ref={pencilRef}

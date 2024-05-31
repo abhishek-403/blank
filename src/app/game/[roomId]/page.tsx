@@ -85,9 +85,7 @@ export default function GamePage() {
     curRound: 0,
   });
   const [wordList, setWordList] = useState<string[]>([""]);
-  const [isLayOver, setIsLayOver] = useState<boolean>(
-    gameStage === GAME_STAGE.WAITING
-  );
+ 
   const [totalRound, setTotalRound] = useState<number>(1);
   const [time, setTime] = useState<number>(20);
 
@@ -177,9 +175,7 @@ export default function GamePage() {
     }
   }, [name]);
 
-  useEffect(() => {
-    setIsLayOver(gameStage===GAME_STAGE.WAITING)
-  }, [gameStage]);
+ 
 
   useEffect(() => {
     if (!player) return;
@@ -207,17 +203,18 @@ export default function GamePage() {
           </div>
           <div>
             <SharedBoardScreen
-              isLayOver={isLayOver}
+              gameStage={gameStage}
               wordList={wordList}
               player={player}
               socket={socket}
+              standings={standings}
             />
-            <input
+            {/* <input
               type="text"
               value={window?.location.href}
               className="w-full"
               readOnly
-            />
+            /> */}
             <div>
               {player?.isRoomAdmin && (
                 <button onClick={startGame}>Start</button>
