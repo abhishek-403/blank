@@ -7,7 +7,6 @@ export const useSocket = () => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   
   useEffect(() => {
-    console.log("----useSocket used-----");
 
     const ws = new WebSocket(`${WS_URL}`);
 
@@ -20,7 +19,6 @@ export const useSocket = () => {
     };
 
     return () => {
-      console.log("-----useSocket closed-----");
       ws.close();
       
     };

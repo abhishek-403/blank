@@ -90,7 +90,6 @@ export default class Board extends EventTarget {
   }
   changeTool(tool: Tools) {
     this.activeTool = tool;
-    console.log("tool changed", this.activeTool);
   }
   clearCanvas() {
     this.pencil.clean();

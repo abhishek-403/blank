@@ -28,14 +28,12 @@ export default function SharedBoardScreen({
   );
 
   useEffect(() => {
-    console.log(player?.isTurnPlayer);
     if (!player) return;
     setIsDisabled(!player.isTurnPlayer);
   }, [player]);
 
   function wordSelected(i: number) {
     if (!socket) {
-      console.log("not player");
       return;
     }
     setWord(wordList[i]);

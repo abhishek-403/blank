@@ -117,7 +117,6 @@ export default function GamePage() {
   }
 
   useEffect(() => {
-    console.log("usefdee");
 
     if (!socket) {
       return;
@@ -157,7 +156,6 @@ export default function GamePage() {
         setWord
       );
     } catch (e) {
-      console.log("e");
     }
     return () => {
       removeAllListeners();
@@ -166,7 +164,6 @@ export default function GamePage() {
 
   let name = searchparam.get("name");
   useEffect(() => {
-    console.log("useee");
 
     if (!name) {
       let prevId = params.roomId;
@@ -180,12 +177,9 @@ export default function GamePage() {
   useEffect(() => {
     if (!player) return;
     chats.push({ user: player.user, message: error! });
-    console.log("errooor", error);
   }, [error]);
 
-  // useEffect(() => {
-  //   console.log("player", player);
-  // }, [player]);
+  
   return (
     <div>
       <div className="flex h-full flex-col gap-2 ">
@@ -372,12 +366,9 @@ function addAllListners(socket: WebSocket, params: Params) {
 
 function removeAllListeners() {
   board.removeEventListener(STATE_CHANGE, () => {
-    console.log("removed statechange listener");
   });
   board.removeEventListener(CLEAR_CANVAS, () => {
-    console.log("removed statechange listener");
   });
   board.removeEventListener(DRAWING_ON_CANVAS, () => {
-    console.log("removed statechange listener");
   });
 }

@@ -28,10 +28,9 @@ export default function Canvas({ isDisabled }: Props) {
   const pencilRef = useRef<HTMLButtonElement>(null);
   const rectRef = useRef<HTMLButtonElement>(null);
   const [board, setBoard] = useState<any>();
+  
   useEffect(() => {
     boardSetup();
-
-    console.log("use effec");
   }, []);
 
   function boardSetup() {
