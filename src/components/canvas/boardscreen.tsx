@@ -1,7 +1,7 @@
 "use client";
 import { GAME_STAGE, Player } from "@/app/game/[roomId]/page";
 import Canvas from "@/components/canvas/Canvas";
-import { WORD_CHOOSEN } from "@/constants";
+import { INIT_ROOM, START_GAME, WORD_CHOOSEN } from "@/constants";
 import { useParams, useRouter } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
 
@@ -10,8 +10,8 @@ type Props = {
   player: Player | undefined;
   socket: WebSocket | null;
   gameStage: GAME_STAGE;
-  standings: Player[] | undefined;  
-  setWord: React.Dispatch<SetStateAction<string>>
+  standings: Player[] | undefined;
+  setWord: React.Dispatch<SetStateAction<string>>;
 };
 export default function SharedBoardScreen({
   wordList,
@@ -19,7 +19,7 @@ export default function SharedBoardScreen({
   socket,
   gameStage,
   standings,
-  setWord
+  setWord,
 }: Props) {
   const router = useRouter();
   const params = useParams();
@@ -53,7 +53,23 @@ export default function SharedBoardScreen({
       <button onClick={() => router.push("/")}>back</button>
       <div className="p-4 border-2 border-black">Room page</div>
       <div className="relative w-[100%]">
-        <Canvas isDisabled={isDisabled} />        
+        <Canvas isDisabled={isDisabled} />
+        <div
+          style={{
+            display:
+              player?.isRoomAdmin && gameStage === GAME_STAGE.LOBBY
+                ? "flex"
+                : "none",
+          }}
+          className="absolute z-2   h-full w-full top-0 left-0 items-center justify-center "
+        >
+          <GameSettings
+            isRoomAdmin={player?.isRoomAdmin}
+            roomId={params.roomId}
+            player={player}
+            socket={socket}
+          />
+        </div>
         <div
           style={{
             display:
@@ -63,7 +79,7 @@ export default function SharedBoardScreen({
           }}
           className="absolute z-2   h-full w-full top-0 left-0 items-center justify-center"
         >
-          {gameStage === GAME_STAGE.END  ? (
+          {gameStage === GAME_STAGE.END ? (
             <EndScreen standings={standings} />
           ) : (
             <div>
@@ -109,6 +125,117 @@ function EndScreen({ standings }: EndScreenProps) {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+const generateOptions = () => {
+  let timeOptions = [];
+  const roundOptions: number[] = [1, 2, 3, 4, 5];
+  for (let i = 30; i <= 120; i += 15) {
+    timeOptions.push(i);
+  }
+  return { timeOptions, roundOptions };
+};
+
+type GameSettingsProp = {
+  isRoomAdmin: boolean | undefined;
+  socket: WebSocket | null;
+  roomId: string | string[];
+  player: Player | undefined;
+};
+function GameSettings({
+  isRoomAdmin,
+  socket,
+  roomId,
+  player,
+}: GameSettingsProp) {
+  const { timeOptions, roundOptions } = generateOptions();
+
+  const [totalRound, setTotalRound] = useState<number>(roundOptions[0]);
+  const [time, setTime] = useState<number>(timeOptions[0]);
+
+  function startGame() {
+    if (!socket) return;
+
+    socket.send(
+      JSON.stringify({
+        type: INIT_ROOM,
+        payload: {
+          roomId,
+          format: {
+            duration: { time: time },
+            rounds: totalRound,
+          },
+        },
+      })
+    );
+    socket.send(
+      JSON.stringify({
+        type: START_GAME,
+        payload: {
+          player,
+          roomId,
+        },
+      })
+    );
+  }
+
+  const handleField1Change = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setTime(Number(event.target.value));
+  };
+
+  const handleField2Change = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setTotalRound(Number(event.target.value));
+  };
+
+  return (
+    <div className="flex flex-col gap-4 overflow-auto z-2">
+      <div className="flex flex-col items-center justify-center  p-4 bg-gray-100">
+        <div className="w-full max-w-xs">
+          <label
+            htmlFor="field1"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Select Time
+          </label>
+          <select
+            id="field1"
+            name="field1"
+            className="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            value={time}
+            onChange={handleField1Change}
+          >
+            {timeOptions.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="w-full max-w-xs mt-4">
+          <label
+            htmlFor="field2"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Select Rounds
+          </label>
+          <select
+            id="field2"
+            name="field2"
+            className="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            value={totalRound}
+            onChange={handleField2Change}
+          >
+            {roundOptions.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div>{<button onClick={startGame}>Start</button>}</div>
     </div>
   );
 }

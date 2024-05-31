@@ -62,6 +62,7 @@ export enum GAME_STAGE {
   ONGOING,
   WAITING,
   NA,
+  READY,
 }
 export interface RoundData {
   totalRounds: number;
@@ -80,44 +81,14 @@ export default function GamePage() {
   const [standings, setStandings] = useState<Player[]>();
   const [word, setWord] = useState<string>("");
   const [error, setError] = useState<string | undefined>();
-  const [gameStage, setGameStage] = useState<GAME_STAGE>(GAME_STAGE.NA);
+  const [gameStage, setGameStage] = useState<GAME_STAGE>(GAME_STAGE.LOBBY);
   const [roundData, setRoundData] = useState<RoundData>({
     totalRounds: 0,
     curRound: 0,
   });
   const [wordList, setWordList] = useState<string[]>([""]);
 
-  const [totalRound, setTotalRound] = useState<number>(1);
-  const [time, setTime] = useState<number>(20);
-
-  function startGame() {
-    if (!socket) return;
-
-    socket.send(
-      JSON.stringify({
-        type: INIT_ROOM,
-        payload: {
-          roomId: params.roomId,
-          format: {
-            duration: { time: time },
-            rounds: totalRound,
-          },
-        },
-      })
-    );
-    socket.send(
-      JSON.stringify({
-        type: START_GAME,
-        payload: {
-          player,
-          roomId: params.roomId,
-        },
-      })
-    );
-  }
-
   useEffect(() => {
-
     if (!socket) {
       return;
     }
@@ -155,8 +126,7 @@ export default function GamePage() {
         setWordList,
         setWord
       );
-    } catch (e) {
-    }
+    } catch (e) {}
     return () => {
       removeAllListeners();
     };
@@ -164,7 +134,6 @@ export default function GamePage() {
 
   let name = searchparam.get("name");
   useEffect(() => {
-
     if (!name) {
       let prevId = params.roomId;
       if (!prevId) {
@@ -179,7 +148,6 @@ export default function GamePage() {
     chats.push({ user: player.user, message: error! });
   }, [error]);
 
-  
   return (
     <div>
       <div className="flex h-full flex-col gap-2 ">
@@ -196,7 +164,7 @@ export default function GamePage() {
           <div>
             <ParticipantsWindow standings={standings} />
           </div>
-          <div>
+          <div className="relative w-[100%]">
             <SharedBoardScreen
               setWord={setWord}
               gameStage={gameStage}
@@ -211,11 +179,8 @@ export default function GamePage() {
               className="w-full"
               readOnly
             /> */}
-            <div>
-              {player?.isRoomAdmin && (
-                <button onClick={startGame}>Start</button>
-              )}
-            </div>
+            
+            
           </div>
           <div>
             <ChatWindow socket={socket} chats={chats} player={player} />
@@ -225,6 +190,8 @@ export default function GamePage() {
     </div>
   );
 }
+
+
 
 function isOpen(ws: WebSocket) {
   return ws.readyState === ws.OPEN;
@@ -365,10 +332,7 @@ function addAllListners(socket: WebSocket, params: Params) {
 }
 
 function removeAllListeners() {
-  board.removeEventListener(STATE_CHANGE, () => {
-  });
-  board.removeEventListener(CLEAR_CANVAS, () => {
-  });
-  board.removeEventListener(DRAWING_ON_CANVAS, () => {
-  });
+  board.removeEventListener(STATE_CHANGE, () => {});
+  board.removeEventListener(CLEAR_CANVAS, () => {});
+  board.removeEventListener(DRAWING_ON_CANVAS, () => {});
 }
