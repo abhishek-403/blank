@@ -121,16 +121,7 @@ type EndScreenProps = {
 function EndScreen({ standings, isRoomAdmin, socket, roomId }: EndScreenProps) {
   if (!standings) return;
 
-  function restart() {
-    socket?.send(
-      JSON.stringify({
-        type: RESTART_GAME,
-        payload: {
-          roomId,
-        },
-      })
-    );
-  }
+
   function toHome() {
     socket?.send(JSON.stringify({
       type:UPDATE_GAME_STAGE,
@@ -162,7 +153,6 @@ function EndScreen({ standings, isRoomAdmin, socket, roomId }: EndScreenProps) {
       </div>
       <div>
         {isRoomAdmin && <button onClick={toHome}>Home</button>}
-        {isRoomAdmin && <button onClick={restart}>Restart</button>}
       </div>
     </div>
   );
