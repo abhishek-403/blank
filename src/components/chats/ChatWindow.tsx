@@ -1,8 +1,8 @@
 "use client";
-import { Player, chat } from "@/app/game/[roomId]/page";
+import { SUBMIT_ANSWER } from "@/constants/messages";
+import { Player, chat } from "@/constants/types";
 import { useParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import { SUBMIT_ANSWER } from "@/constants";
 
 type Props = {
   socket: WebSocket | null;

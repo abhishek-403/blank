@@ -1,34 +1,18 @@
 "use client";
 import Board, { Tools } from "@/board";
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from "@/constants";
-import { redirect, useParams } from "next/navigation";
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from "@/constants/messages";
 import React, { useEffect, useRef, useState } from "react";
 
-export type CanvasState = {
-  pencil: Pos[][];
-  rects: RectangleProps[];
-};
-interface Pos {
-  x: number;
-  y: number;
-}
-interface RectangleProps {
-  pos: Pos;
-  width: number;
-  height: number;
-}
 type Props = {
   isDisabled: boolean;
 };
-
 export const newBoard = new Board(CANVAS_WIDTH, CANVAS_HEIGHT);
-
 export default function Canvas({ isDisabled }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pencilRef = useRef<HTMLButtonElement>(null);
   const rectRef = useRef<HTMLButtonElement>(null);
   const [board, setBoard] = useState<any>();
-  
+
   useEffect(() => {
     boardSetup();
   }, []);

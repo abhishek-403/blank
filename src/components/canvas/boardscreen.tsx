@@ -1,5 +1,4 @@
 "use client";
-import { GAME_STAGE, Player, word } from "@/app/game/[roomId]/page";
 import Canvas from "@/components/canvas/Canvas";
 import {
   INIT_ROOM,
@@ -7,9 +6,10 @@ import {
   START_GAME,
   UPDATE_GAME_STAGE,
   WORD_CHOOSEN,
-} from "@/constants";
+} from "@/constants/messages";
+import { GAME_STAGE, Player, word } from "@/constants/types";
 import { useParams, useRouter } from "next/navigation";
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   wordList: word[];
@@ -126,7 +126,6 @@ type InterLapScreenProps = {
   word: word;
 };
 function InterLapScreen({ word }: InterLapScreenProps) {
-
   return <div className="text-black">The word was {word.word}</div>;
 }
 

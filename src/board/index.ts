@@ -1,7 +1,11 @@
-import { CLEAR_CANVAS, DRAWING_ON_CANVAS, STATE_CHANGE } from "@/constants";
-import { CanvasState } from "@/components/canvas/Canvas";
+import {
+  CLEAR_CANVAS,
+  DRAWING_ON_CANVAS,
+  STATE_CHANGE,
+} from "@/constants/messages";
 import Pencil from "./Tools/Pencil";
 import Rectangle, { RectangleProps } from "./Tools/Rectangle";
+import { CanvasState } from "@/constants/types";
 
 export type Pos = {
   x: number;

@@ -1,18 +1,6 @@
-import { Player } from "@/app/game/[roomId]/page";
-import React from "react";
+import { EachUser, Player } from "@/constants/types";
 
 type Props = { standings: Player[] | undefined };
-type User = {
-  name: string;
-  points: number;
-  rank: number;
-}[];
-type EachUser = {
-  name: string;
-  points: number;
-  rank: number;
-  hasGuessedCurLap: boolean;
-};
 
 
 export default function ParticipantsWindow({ standings }: Props) {

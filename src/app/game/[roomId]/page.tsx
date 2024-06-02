@@ -25,7 +25,8 @@ import {
   WAIT_CLOCK,
   WORD_CHOOSEN_ACK,
   WRONG_ANSWER,
-} from "@/constants";
+} from "@/constants/messages";
+import { GAME_STAGE, Player, RoundData, chat, word } from "@/constants/types";
 import { useSocket } from "@/hooks/useSocket";
 import CryptoJS from "crypto-js";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
@@ -33,46 +34,6 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
 let CRYPTO_SECRET_KEY = "d32432dijd334rcmoakm139cdowqap";
 
-export class User {
-  public id: string;
-  public socket: WebSocket;
-  public name: string;
-
-  constructor(name: string, socket: WebSocket, userId: string) {
-    this.socket = socket;
-    this.id = userId;
-    this.name = name;
-  }
-}
-export interface chat {
-  user: User;
-  message: string;
-}
-export interface Player {
-  user: User;
-  points: number;
-  rank: number;
-  hasGuessedCurLap: boolean;
-  isTurnPlayer: boolean;
-  isRoomAdmin: boolean;
-}
-export enum GAME_STAGE {
-  LOBBY,
-  END,
-  ONGOING,
-  WAITING,
-  NA,
-  INTERLAP,
-}
-
-export interface RoundData {
-  totalRounds: number;
-  curRound: number;
-}
-export type word = {
-  word: string;
-  wordLength: number;
-};
 
 export default function GamePage() {
   const socket = useSocket();

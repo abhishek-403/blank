@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Home() {

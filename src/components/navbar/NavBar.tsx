@@ -1,5 +1,4 @@
-import { GAME_STAGE, Player, RoundData, word } from "@/app/game/[roomId]/page";
-import React from "react";
+import { GAME_STAGE, Player, RoundData, word } from "@/constants/types";
 
 type Props = {
   roundData: RoundData;
