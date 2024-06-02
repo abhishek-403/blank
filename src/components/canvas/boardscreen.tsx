@@ -1,7 +1,13 @@
 "use client";
 import { GAME_STAGE, Player, word } from "@/app/game/[roomId]/page";
 import Canvas from "@/components/canvas/Canvas";
-import { INIT_ROOM, RESTART_GAME, START_GAME, UPDATE_GAME_STAGE, WORD_CHOOSEN } from "@/constants";
+import {
+  INIT_ROOM,
+  RESTART_GAME,
+  START_GAME,
+  UPDATE_GAME_STAGE,
+  WORD_CHOOSEN,
+} from "@/constants";
 import { useParams, useRouter } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
 
@@ -11,7 +17,7 @@ type Props = {
   socket: WebSocket | null;
   gameStage: GAME_STAGE;
   standings: Player[] | undefined;
-  setWord: React.Dispatch<SetStateAction<word>>;
+  word: word;
 };
 export default function SharedBoardScreen({
   wordList,
@@ -19,7 +25,7 @@ export default function SharedBoardScreen({
   socket,
   gameStage,
   standings,
-  setWord,
+  word,
 }: Props) {
   const router = useRouter();
   const params = useParams();
@@ -36,12 +42,11 @@ export default function SharedBoardScreen({
     if (!socket) {
       return;
     }
-    // setWord(wordList[i]);
     socket.send(
       JSON.stringify({
         type: WORD_CHOOSEN,
         payload: {
-          word:wordList[i].word,
+          word: wordList[i].word,
           roomId: params.roomId,
         },
       })
@@ -73,7 +78,9 @@ export default function SharedBoardScreen({
         <div
           style={{
             display:
-              gameStage === GAME_STAGE.WAITING || gameStage === GAME_STAGE.END
+              gameStage === GAME_STAGE.INTERLAP ||
+              gameStage === GAME_STAGE.WAITING ||
+              gameStage === GAME_STAGE.END
                 ? "flex"
                 : "none",
           }}
@@ -86,6 +93,8 @@ export default function SharedBoardScreen({
               isRoomAdmin={player?.isRoomAdmin}
               socket={socket}
             />
+          ) : gameStage === GAME_STAGE.INTERLAP ? (
+            <InterLapScreen word={word} />
           ) : (
             <div>
               {player?.isTurnPlayer ? (
@@ -112,36 +121,42 @@ export default function SharedBoardScreen({
     </div>
   );
 }
+
+type InterLapScreenProps = {
+  word: word;
+};
+function InterLapScreen({ word }: InterLapScreenProps) {
+
+  return <div className="text-black">The word was {word.word}</div>;
+}
+
 type EndScreenProps = {
   standings: Player[] | undefined;
   isRoomAdmin: boolean | undefined;
   socket: WebSocket | null;
-  roomId: string|string[];
+  roomId: string | string[];
 };
 function EndScreen({ standings, isRoomAdmin, socket, roomId }: EndScreenProps) {
   if (!standings) return;
 
-
   function toHome() {
-    socket?.send(JSON.stringify({
-      type:UPDATE_GAME_STAGE,
-      payload:{
-        gameStage:GAME_STAGE.LOBBY,
-        roomId,
-        message:RESTART_GAME
-      }
-    }))
-
-    
-    console.log("gameStage");
-    
+    socket?.send(
+      JSON.stringify({
+        type: UPDATE_GAME_STAGE,
+        payload: {
+          gameStage: GAME_STAGE.LOBBY,
+          roomId,
+          message: RESTART_GAME,
+        },
+      })
+    );
   }
   return (
     <div>
       <div className="flex flex-col gap-4 overflow-auto">
-        {standings.map((user) => {
+        {standings.map((user, i) => {
           return (
-            <div className="flex flex-col items-center border-2 ">
+            <div key={i} className="flex flex-col items-center border-2 ">
               <div className="flex gap-1 text-xl">
                 <strong>#{user.rank}</strong>
                 <p className="capitalize">{user.user.name}</p>
@@ -151,9 +166,7 @@ function EndScreen({ standings, isRoomAdmin, socket, roomId }: EndScreenProps) {
           );
         })}
       </div>
-      <div>
-        {isRoomAdmin && <button onClick={toHome}>Home</button>}
-      </div>
+      <div>{isRoomAdmin && <button onClick={toHome}>Home</button>}</div>
     </div>
   );
 }
@@ -186,8 +199,6 @@ function GameSettings({
 
   function startGame() {
     if (!socket) return;
-    console.log("Start");
-    
 
     socket.send(
       JSON.stringify({

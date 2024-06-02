@@ -1,40 +1,37 @@
 "use client";
-import CryptoJS from "crypto-js";
+import { newBoard as board } from "@/components/canvas/Canvas";
+import SharedBoardScreen from "@/components/canvas/boardscreen";
+import ChatWindow from "@/components/chats/ChatWindow";
+import NavBar from "@/components/navbar/NavBar";
+import ParticipantsWindow from "@/components/participants/ParticipantsWindow";
 import {
   CHOOSE_WORD,
   CLEAR_CANVAS,
   CORRECT_ANSWER,
   DISABLE_INPUT,
+  DISPLAY_CHOOSEN_WORD_TO_ALL,
   DRAWING_ON_CANVAS,
   ENABLE_INPUT,
   ERROR,
   GAME_CLOCK,
-  INIT_CANVAS,
+  GENERAL_CLOCK,
   INIT_GAME,
-  INIT_ROOM,
   INIT_USER,
-  INTI_CHAT,
   JOIN_ROOM,
-  DISPLAY_CHOOSEN_WORD,
-  START_GAME,
   STATE_CHANGE,
   UPDATE_CANVAS,
   UPDATE_GAME_STAGE,
   UPDATE_STANDINGS,
   WAIT_CLOCK,
-  WRONG_ANSWER,
   WORD_CHOOSEN_ACK,
+  WRONG_ANSWER,
 } from "@/constants";
-let CRYPTO_SECRET_KEY = "d32432dijd334rcmoakm139cdowqap";
-import { newBoard as board } from "@/components/canvas/Canvas";
-import SharedBoardScreen from "@/components/canvas/boardscreen";
-import ChatWindow from "@/components/chats/ChatWindow";
-import ParticipantsWindow from "@/components/participants/ParticipantsWindow";
 import { useSocket } from "@/hooks/useSocket";
+import CryptoJS from "crypto-js";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
-import NavBar from "@/components/navbar/NavBar";
+let CRYPTO_SECRET_KEY = "d32432dijd334rcmoakm139cdowqap";
 
 export class User {
   public id: string;
@@ -65,8 +62,9 @@ export enum GAME_STAGE {
   ONGOING,
   WAITING,
   NA,
-  READY,
+  INTERLAP,
 }
+
 export interface RoundData {
   totalRounds: number;
   curRound: number;
@@ -175,7 +173,7 @@ export default function GamePage() {
           </div>
           <div className="relative w-[100%]">
             <SharedBoardScreen
-              setWord={setWord}
+              word={word}
               gameStage={gameStage}
               wordList={wordList}
               player={player}
@@ -254,6 +252,9 @@ function listenSocketMessages(
       case WAIT_CLOCK:
         setClock(message.payload.waitTime);
         break;
+      case GENERAL_CLOCK:
+        setClock(message.payload.clockTime);
+        break;
       case UPDATE_STANDINGS:
         setStandings(message.payload.standings);
         break;
@@ -277,12 +278,13 @@ function listenSocketMessages(
             wordLength: obj.wordLength,
           };
         });
-        console.log(decryptedArray);
-
         setWordList(decryptedArray);
         break;
-      case DISPLAY_CHOOSEN_WORD:
-        setWord(message.payload.word);
+      case DISPLAY_CHOOSEN_WORD_TO_ALL:
+        setWord({
+          word: message.payload.word,
+          wordLength: message.payload.wordLength,
+        });
         break;
       case WORD_CHOOSEN_ACK:
         setWord({

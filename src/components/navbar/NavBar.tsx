@@ -16,7 +16,7 @@ export default function NavBar({
   player,
   gameStage,
 }: Props) {
-  // console.log(word);
+  let a = new Array(word.wordLength).fill(0);
 
   return (
     <div className="flex item-center justify-around border-2">
@@ -33,11 +33,19 @@ export default function NavBar({
             word.word
           ) : (
             <div>
-              {gameStage === GAME_STAGE.WAITING ||
-              gameStage === GAME_STAGE.END ? (
+              {gameStage === GAME_STAGE.INTERLAP ||
+              gameStage === GAME_STAGE.END ||
+              player?.hasGuessedCurLap ? (
                 <div>{word.word}</div>
               ) : (
-                <div className="flex gap-2">_ _ _ _</div>
+                <div className="flex gap-4">
+                  <div className="flex gap-1">
+                    {a.map((_t, i) => {
+                      return <span key={i}>_</span>;
+                    })}
+                  </div>
+                  <p className="text-sm">{word.wordLength}</p>
+                </div>
               )}
             </div>
           )}
