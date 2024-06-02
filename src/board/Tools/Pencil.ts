@@ -1,4 +1,3 @@
-import { CanvasState } from "@/components/canvas/Canvas";
 import { Pos } from "..";
 
 export default class Pencil {

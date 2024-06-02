@@ -1,9 +1,9 @@
 "use client";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
-export default function Home() {
+function Home() {
   const router = useRouter();
   const searchparams = useSearchParams();
   const [name, setName] = useState<string>("");
@@ -76,4 +76,13 @@ export default function Home() {
       )}
     </div>
   );
+}
+
+
+export default function App(){
+  return(
+    <Suspense>
+      <Home/>
+    </Suspense>
+  )
 }
