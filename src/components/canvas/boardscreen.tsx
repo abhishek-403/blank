@@ -1,17 +1,17 @@
 "use client";
-import { GAME_STAGE, Player } from "@/app/game/[roomId]/page";
+import { GAME_STAGE, Player, word } from "@/app/game/[roomId]/page";
 import Canvas from "@/components/canvas/Canvas";
 import { INIT_ROOM, RESTART_GAME, START_GAME, UPDATE_GAME_STAGE, WORD_CHOOSEN } from "@/constants";
 import { useParams, useRouter } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
 
 type Props = {
-  wordList: string[];
+  wordList: word[];
   player: Player | undefined;
   socket: WebSocket | null;
   gameStage: GAME_STAGE;
   standings: Player[] | undefined;
-  setWord: React.Dispatch<SetStateAction<string>>;
+  setWord: React.Dispatch<SetStateAction<word>>;
 };
 export default function SharedBoardScreen({
   wordList,
@@ -36,12 +36,12 @@ export default function SharedBoardScreen({
     if (!socket) {
       return;
     }
-    setWord(wordList[i]);
+    // setWord(wordList[i]);
     socket.send(
       JSON.stringify({
         type: WORD_CHOOSEN,
         payload: {
-          index: i,
+          word:wordList[i].word,
           roomId: params.roomId,
         },
       })
@@ -97,7 +97,7 @@ export default function SharedBoardScreen({
                         onClick={() => wordSelected(i)}
                         className="p-4 border-2 bg-white text-xl cursor-pointer hover:bg-zinc-100 "
                       >
-                        {word}
+                        {word.word}
                       </div>
                     );
                   })}

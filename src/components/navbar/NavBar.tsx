@@ -1,10 +1,10 @@
-import { GAME_STAGE, Player, RoundData } from "@/app/game/[roomId]/page";
+import { GAME_STAGE, Player, RoundData, word } from "@/app/game/[roomId]/page";
 import React from "react";
 
 type Props = {
   roundData: RoundData;
   clock: number;
-  word: string;
+  word: word;
   player: Player | undefined;
   gameStage: GAME_STAGE;
 };
@@ -16,8 +16,8 @@ export default function NavBar({
   player,
   gameStage,
 }: Props) {
+  // console.log(word);
 
-  let w = new Array(word.length)
   return (
     <div className="flex item-center justify-around border-2">
       <div>
@@ -30,16 +30,14 @@ export default function NavBar({
         <div>Guess this</div>
         <div>
           {player?.isTurnPlayer ? (
-            word
+            word.word
           ) : (
             <div>
               {gameStage === GAME_STAGE.WAITING ||
               gameStage === GAME_STAGE.END ? (
-                <div>{word}</div>
+                <div>{word.word}</div>
               ) : (
-                <div className="flex gap-2">
-                  _ _ _ _
-                </div>
+                <div className="flex gap-2">_ _ _ _</div>
               )}
             </div>
           )}

@@ -33,3 +33,4 @@ export const WORD_CHOOSEN = "word_choosen";
 export const WAIT_CLOCK = "wait_clock";
 export const DISPLAY_CHOOSEN_WORD = "display_choosen_word";
 export const RESTART_GAME = "restart_game";
+export const WORD_CHOOSEN_ACK = "word_choosen_ack";

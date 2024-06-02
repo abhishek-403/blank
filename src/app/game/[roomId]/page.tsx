@@ -1,4 +1,5 @@
 "use client";
+import CryptoJS from "crypto-js";
 import {
   CHOOSE_WORD,
   CLEAR_CANVAS,
@@ -22,7 +23,9 @@ import {
   UPDATE_STANDINGS,
   WAIT_CLOCK,
   WRONG_ANSWER,
+  WORD_CHOOSEN_ACK,
 } from "@/constants";
+let CRYPTO_SECRET_KEY = "d32432dijd334rcmoakm139cdowqap";
 import { newBoard as board } from "@/components/canvas/Canvas";
 import SharedBoardScreen from "@/components/canvas/boardscreen";
 import ChatWindow from "@/components/chats/ChatWindow";
@@ -68,6 +71,10 @@ export interface RoundData {
   totalRounds: number;
   curRound: number;
 }
+export type word = {
+  word: string;
+  wordLength: number;
+};
 
 export default function GamePage() {
   const socket = useSocket();
@@ -79,14 +86,16 @@ export default function GamePage() {
   const [clock, setClock] = useState<number>(0);
   const [player, setPlayer] = useState<Player | undefined>();
   const [standings, setStandings] = useState<Player[]>();
-  const [word, setWord] = useState<string>("");
+  const [word, setWord] = useState<word>({ word: "", wordLength: 0 });
   const [error, setError] = useState<string | undefined>();
   const [gameStage, setGameStage] = useState<GAME_STAGE>(GAME_STAGE.LOBBY);
   const [roundData, setRoundData] = useState<RoundData>({
     totalRounds: 0,
     curRound: 0,
   });
-  const [wordList, setWordList] = useState<string[]>([""]);
+  const [wordList, setWordList] = useState<word[]>([
+    { word: "", wordLength: 0 },
+  ]);
 
   useEffect(() => {
     if (!socket) {
@@ -202,8 +211,8 @@ function listenSocketMessages(
   setError: React.Dispatch<SetStateAction<string | undefined>>,
   setGameStage: React.Dispatch<SetStateAction<GAME_STAGE>>,
   setRoundData: React.Dispatch<SetStateAction<RoundData>>,
-  setWordList: React.Dispatch<SetStateAction<string[]>>,
-  setWord: React.Dispatch<SetStateAction<string>>
+  setWordList: React.Dispatch<SetStateAction<word[]>>,
+  setWord: React.Dispatch<SetStateAction<word>>
 ) {
   if (!socket) return;
   socket.onmessage = (event) => {
@@ -260,10 +269,26 @@ function listenSocketMessages(
         break;
 
       case CHOOSE_WORD:
-        setWordList(message.payload.wordList);
+        let encryWord = message.payload.wordList;
+        const decryptedArray = encryWord.map((obj: word) => {
+          const bytes = CryptoJS.AES.decrypt(obj.word, CRYPTO_SECRET_KEY);
+          return {
+            word: bytes.toString(CryptoJS.enc.Utf8),
+            wordLength: obj.wordLength,
+          };
+        });
+        console.log(decryptedArray);
+
+        setWordList(decryptedArray);
         break;
       case DISPLAY_CHOOSEN_WORD:
         setWord(message.payload.word);
+        break;
+      case WORD_CHOOSEN_ACK:
+        setWord({
+          word: message.payload.word,
+          wordLength: message.payload.wordLength,
+        });
         break;
 
       // canvas
