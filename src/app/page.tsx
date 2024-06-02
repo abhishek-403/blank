@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
 function Home() {
+  
   const router = useRouter();
   const searchparams = useSearchParams();
   const [name, setName] = useState<string>("");
