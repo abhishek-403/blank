@@ -32,7 +32,7 @@ import CryptoJS from "crypto-js";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
-let CRYPTO_SECRET_KEY = "d32432dijd334rcmoakm139cdowqap";
+export const CRYPTO_SECRET_KEY = "d32432dijd334rcmoakm139cdowqap";
 
 
 export default function GamePage() {
@@ -175,6 +175,7 @@ function listenSocketMessages(
 ) {
   if (!socket) return;
   socket.onmessage = (event) => {
+    
     const message = JSON.parse(event.data);
 
     switch (message.type) {
@@ -234,6 +235,7 @@ function listenSocketMessages(
         let encryWord = message.payload.wordList;
         const decryptedArray = encryWord.map((obj: word) => {
           const bytes = CryptoJS.AES.decrypt(obj.word, CRYPTO_SECRET_KEY);
+          
           return {
             word: bytes.toString(CryptoJS.enc.Utf8),
             wordLength: obj.wordLength,
@@ -248,8 +250,13 @@ function listenSocketMessages(
         });
         break;
       case WORD_CHOOSEN_ACK:
+        var bytes = CryptoJS.AES.decrypt(
+          message.payload.word,
+          process.env.CRYPTO_SECRET_KEY!
+        );
+        var wordChoosen = bytes.toString(CryptoJS.enc.Utf8);
         setWord({
-          word: message.payload.word,
+          word: wordChoosen,
           wordLength: message.payload.wordLength,
         });
         break;

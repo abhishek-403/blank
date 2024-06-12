@@ -10,7 +10,8 @@ import {
 import { GAME_STAGE, Player, word } from "@/constants/types";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import CryptoJS from "crypto-js";
+import { CRYPTO_SECRET_KEY } from "@/app/game/[roomId]/page";
 type Props = {
   wordList: word[];
   player: Player | undefined;
@@ -42,11 +43,16 @@ export default function SharedBoardScreen({
     if (!socket) {
       return;
     }
+
+    let choosenword = CryptoJS.AES.encrypt(
+      wordList[i].word,
+      process.env.CRYPTO_SECRET_KEY!
+    ).toString();
     socket.send(
       JSON.stringify({
         type: WORD_CHOOSEN,
         payload: {
-          word: wordList[i].word,
+          word: choosenword,
           roomId: params.roomId,
         },
       })
@@ -104,7 +110,7 @@ export default function SharedBoardScreen({
                       <div
                         key={i}
                         onClick={() => wordSelected(i)}
-                        className="p-4 border-2 bg-white text-xl cursor-pointer hover:bg-zinc-100 "
+                        className="p-4 border-2 text-black bg-white text-xl cursor-pointer hover:bg-zinc-100 "
                       >
                         {word.word}
                       </div>

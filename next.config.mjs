@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: false,
   env: {
-    CRYPTO_SECRET_KEY: process.env.NEXT_PUBLIC_CRYPTO_SECRET_KEY,
+    CRYPTO_SECRET_KEY: process.env.CRYPTO_SECRET_KEY,
   },
 };
 

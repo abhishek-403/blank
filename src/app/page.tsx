@@ -12,12 +12,19 @@ function Home() {
   const [create, setCreate] = useState<boolean>(true);
 
   async function createRoom() {
-    if (!name) return;
-
-    const data = await axios.post("http://localhost:3001/createroom");
-
-    const res = data.data;
-    router.replace(`/game/${res.roomId}/?name=${name}`);
+    try {
+      if (!name) return;
+  
+      const data = await axios.post("http://localhost:3001/createroom");
+  
+      const res = data.data;
+      router.replace(`/game/${res.roomId}/?name=${name}`);
+      
+    } catch (e) {
+      console.log(e);
+      
+    }
+      
   }
   async function joinRoom() {
     if (!name || !roomId) return;
