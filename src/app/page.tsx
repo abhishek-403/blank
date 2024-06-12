@@ -2,9 +2,8 @@
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-
+import bgImg from "../components/assets/background.png";
 function Home() {
-  
   const router = useRouter();
   const searchparams = useSearchParams();
   const [name, setName] = useState<string>("");
@@ -14,17 +13,14 @@ function Home() {
   async function createRoom() {
     try {
       if (!name) return;
-  
+
       const data = await axios.post("http://localhost:3001/createroom");
-  
+
       const res = data.data;
       router.replace(`/game/${res.roomId}/?name=${name}`);
-      
     } catch (e) {
       console.log(e);
-      
     }
-      
   }
   async function joinRoom() {
     if (!name || !roomId) return;
@@ -44,53 +40,83 @@ function Home() {
   }, [searchparams]);
 
   return (
-    <div className="w-full h-[300px] items-center justify-center flex flex-col gap-4">
-      <input
-        type="text"
-        className="border-2"
-        value={name}
-        onKeyDown={(e) => {
-          if (e.key == "Enter") {
-            create ? createRoom() : joinRoom();
-          }
-        }}
-        placeholder="name"
-        onChange={(e) => setName(e.target.value)}
-      />
-      {/* <input
+    <div
+      style={{
+        backgroundImage: `url(${bgImg.src})`,
+        backgroundRepeat: "repeat",
+        width: "100%",
+        backgroundPosition: "center",
+      }}
+      className="w-full h-[100vh]  items-center justify-center flex  "
+    >
+      <div className="flex flex-col border-2 p-6 gap-4 rounded-lg bg-black border-[#5b5b5b]">
+        <div>
+          <input
+            type="text"
+            className="border-2  rounded text-lg p-2 mb-4"
+            value={name}
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                create ? createRoom() : joinRoom();
+              }
+            }}
+            placeholder={create ? "Name" : "URL"}
+            onChange={(e) => setName(e.target.value)}
+          />
+          {/* <input
         type="text"
         className="border-2"
         value={roomId}
         onChange={(e) => setRoomId(e.target.value)}
-      /> */}
-
-      {create ? (
-        <button type="submit" onClick={createRoom}>
-          Create room
-        </button>
-      ) : (
-        <button type="submit" onClick={joinRoom}>
-          Join room
-        </button>
-      )}
-      {create ? (
-        <button type="submit" onClick={() => setCreate(false)}>
-          Change to Join room
-        </button>
-      ) : (
-        <button type="submit" onClick={() => setCreate(true)}>
-          Change to Create room
-        </button>
-      )}
+        /> */}
+        </div>
+        <div className="w-full">
+          {create ? (
+            <button
+              type="submit"
+              className="bg-violet-500 p-2 w-full rounded-md text-xl  text-white  font-medium"
+              onClick={createRoom}
+            >
+              Create room
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="bg-violet-500 p-2 w-full rounded-md text-xl  text-white  font-medium"
+              onClick={joinRoom}
+            >
+              Join room
+            </button>
+          )}
+        </div>
+        <div className="w-full">
+          {create ? (
+            <button
+              type="submit"
+              className="bg-[#212121] p-2 w-full rounded-md text-xl  text-white "
+              onClick={() => setCreate(false)}
+            >
+              Change to Join room
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="bg-[#212121] p-2 w-full rounded-md text-xl  text-white "
+              onClick={() => setCreate(true)}
+            >
+              Change to Create room
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
-
-export default function App(){
-  return(
+export default function App() {
+  return (
     <Suspense>
-      <Home/>
+      <Home />
     </Suspense>
-  )
+  );
 }
