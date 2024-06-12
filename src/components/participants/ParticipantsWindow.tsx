@@ -5,7 +5,7 @@ type Props = { standings: Player[] | undefined };
 
 export default function ParticipantsWindow({ standings }: Props) {
   return (
-    <div>
+    <div className="flex flex-col w-[200px]">
       {standings?.map((u, i) => {
         let user = {
           name: u.user.name,
@@ -23,14 +23,15 @@ export default function ParticipantsWindow({ standings }: Props) {
 function User({ name, points, rank, hasGuessedCurLap }: EachUser) {
   return (
     <div
-      className="flex gap-2 justify-center border-2 "
-      style={{ backgroundColor: hasGuessedCurLap ? "yellow" : "white" }}
+      className="flex font-roboto justify-between border border-[#121212] w-full py-1 px-3"
+      style={{ backgroundColor: hasGuessedCurLap ? "#4ade80":"white" }}
     >
-      <div className="flex justify-center item-center text-lg">#{rank==0?1:rank}</div>
-      <div className="flex items-center flex-col justify-center">
-        <div>{name}</div>
-        <div>{points}</div>
+      <div className="flex text-2xl font-medium">#{rank == 0 ? 1 : rank}</div>
+      <div className="flex items-center flex-col justify-center text-lg">
+        <div className="font-medium ">{name}</div>
+        <div>{points} points</div>
       </div>
+      <div></div>
     </div>
   );
 }

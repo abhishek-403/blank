@@ -3,9 +3,16 @@ export type User = {
   socket: WebSocket;
   name: string;
 };
+
 export interface chat {
   user: User;
   message: string;
+  messageType: MESSAGE_TYPES;
+}
+export enum MESSAGE_TYPES {
+  HASGUESSED,
+  NORMAL,
+  ERROR
 }
 export interface Player {
   user: User;

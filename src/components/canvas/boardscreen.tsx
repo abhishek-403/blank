@@ -11,7 +11,6 @@ import { GAME_STAGE, Player, word } from "@/constants/types";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CryptoJS from "crypto-js";
-import { CRYPTO_SECRET_KEY } from "@/app/game/[roomId]/page";
 type Props = {
   wordList: word[];
   player: Player | undefined;
@@ -60,9 +59,8 @@ export default function SharedBoardScreen({
   }
 
   return (
-    <div className="m-4 border-2 border-red-300">
+    <div className="m-4 border-2  bg-white">
       <button onClick={() => router.push("/")}>back</button>
-      <div className="p-4 border-2 border-black">Room page</div>
       <div className="relative w-[100%]">
         <Canvas isDisabled={isDisabled} />
         <div

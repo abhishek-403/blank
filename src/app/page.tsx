@@ -49,11 +49,11 @@ function Home() {
       }}
       className="w-full h-[100vh]  items-center justify-center flex  "
     >
-      <div className="flex flex-col border-2 p-6 gap-4 rounded-lg bg-black border-[#5b5b5b]">
+      <div className="flex flex-col border-2 p-6 gap-4 rounded-lg bg-black border-[#5b5b5b] w-[350px]">
         <div>
           <input
             type="text"
-            className="border-2  rounded text-lg p-2 mb-4"
+            className="border-2 w-full rounded text-lg p-2 mb-4"
             value={name}
             onKeyDown={(e) => {
               if (e.key == "Enter") {
@@ -61,7 +61,12 @@ function Home() {
               }
             }}
             placeholder={create ? "Name" : "URL"}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              if (
+                e.target.value.length <= 14
+              )
+                setName(e.target.value);
+            }}
           />
           {/* <input
         type="text"

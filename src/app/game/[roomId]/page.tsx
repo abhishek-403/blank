@@ -32,8 +32,6 @@ import CryptoJS from "crypto-js";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
-export const CRYPTO_SECRET_KEY = "d32432dijd334rcmoakm139cdowqap";
-
 
 export default function GamePage() {
   const socket = useSocket();
@@ -111,46 +109,39 @@ export default function GamePage() {
     }
   }, [name]);
 
-  useEffect(() => {
-    if (!player) return;
-    chats.push({ user: player.user, message: error! });
-  }, [error]);
-
   return (
-    <div>
-      <div className="flex h-full flex-col gap-2 ">
+    <div className="flex  flex-col gap-1 ">
+      <div>
+        <NavBar
+          roundData={roundData}
+          clock={clock}
+          word={word}
+          player={player}
+          gameStage={gameStage}
+        />
+      </div>
+      <div className="flex  overflow-auto w-full h-[100%] gap-1 justify-center">
         <div>
-          <NavBar
-            roundData={roundData}
-            clock={clock}
-            word={word}
-            player={player}
-            gameStage={gameStage}
-          />
+          <ParticipantsWindow standings={standings} />
         </div>
-        <div className="flex  overflow-auto w-full h-[100%] gap-10 justify-center">
-          <div>
-            <ParticipantsWindow standings={standings} />
-          </div>
-          <div className="relative w-[100%]">
-            <SharedBoardScreen
-              word={word}
-              gameStage={gameStage}
-              wordList={wordList}
-              player={player}
-              socket={socket}
-              standings={standings}
-            />
-            {/* <input
+        <div className="relative w-[100%]">
+          <SharedBoardScreen
+            word={word}
+            gameStage={gameStage}
+            wordList={wordList}
+            player={player}
+            socket={socket}
+            standings={standings}
+          />
+          {/* <input
               type="text"
               value={window?.location.href}
               className="w-full"
               readOnly
             /> */}
-          </div>
-          <div>
-            <ChatWindow socket={socket} chats={chats} player={player} />
-          </div>
+        </div>
+        <div>
+          <ChatWindow socket={socket} chats={chats} player={player} />
         </div>
       </div>
     </div>
@@ -175,7 +166,6 @@ function listenSocketMessages(
 ) {
   if (!socket) return;
   socket.onmessage = (event) => {
-    
     const message = JSON.parse(event.data);
 
     switch (message.type) {
@@ -195,6 +185,7 @@ function listenSocketMessages(
         //@ts-ignore
         setPlayer((prev) => ({ ...prev, hasGuessedCurLap: true }));
         break;
+
       case ENABLE_INPUT:
         //@ts-ignore
         setPlayer((prev) => ({ ...prev, hasGuessedCurLap: false }));
@@ -202,8 +193,8 @@ function listenSocketMessages(
 
       case CORRECT_ANSWER:
         setChats(message.payload.chats);
-
         break;
+
       case WRONG_ANSWER:
         setChats(message.payload.chats);
         break;
@@ -211,18 +202,21 @@ function listenSocketMessages(
       case GAME_CLOCK:
         setClock(message.payload.time);
         break;
+
       case WAIT_CLOCK:
         setClock(message.payload.waitTime);
         break;
+
       case GENERAL_CLOCK:
         setClock(message.payload.clockTime);
         break;
+
       case UPDATE_STANDINGS:
         setStandings(message.payload.standings);
         break;
 
       case ERROR:
-        setError(message.payload.message);
+        setChats(message.payload.chats);
         break;
 
       case UPDATE_GAME_STAGE:
@@ -234,8 +228,11 @@ function listenSocketMessages(
       case CHOOSE_WORD:
         let encryWord = message.payload.wordList;
         const decryptedArray = encryWord.map((obj: word) => {
-          const bytes = CryptoJS.AES.decrypt(obj.word, CRYPTO_SECRET_KEY);
-          
+          const bytes = CryptoJS.AES.decrypt(
+            obj.word,
+            process.env.CRYPTO_SECRET_KEY!
+          );
+
           return {
             word: bytes.toString(CryptoJS.enc.Utf8),
             wordLength: obj.wordLength,
@@ -243,12 +240,14 @@ function listenSocketMessages(
         });
         setWordList(decryptedArray);
         break;
+
       case DISPLAY_CHOOSEN_WORD_TO_ALL:
         setWord({
           word: message.payload.word,
           wordLength: message.payload.wordLength,
         });
         break;
+
       case WORD_CHOOSEN_ACK:
         var bytes = CryptoJS.AES.decrypt(
           message.payload.word,

@@ -1,6 +1,6 @@
 "use client";
 import { SUBMIT_ANSWER } from "@/constants/messages";
-import { Player, chat } from "@/constants/types";
+import { MESSAGE_TYPES, Player, chat } from "@/constants/types";
 import { useParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -47,14 +47,29 @@ export default function ChatWindow({ socket, chats, player }: Props) {
 
   return (
     <div>
-      ChatWindow
-      <div className="relative h-[600px]  flex flex-col w-[300px] border-2">
-        <div className="w-full mt-auto mb-8  overflow-y-auto ">
+      <div className="relative h-[600px] bg-white flex flex-col w-[320px] border border-[#121212]">
+        <div className="w-full mt-auto mb-8  overflow-y-auto  ">
           {chats.map((e, i) => {
             return (
-              <div key={i} className="flex gap-2  w-full">
-                <p className="text-extrabold ">{`${e.user.name} :`}</p>
-                <p className="text-base">{e.message}</p>
+              <div
+                key={i}
+                className="flex font-roboto flex-row gap-1 p-1  px-2 border-t rounded  items-center"
+                style={{
+                  background:
+                    e.messageType === MESSAGE_TYPES.ERROR
+                      ? "#fda4af"
+                      : e.messageType === MESSAGE_TYPES.HASGUESSED
+                      ? "#4ade80"
+                      : "white",
+                }}
+              >
+                {e.messageType === MESSAGE_TYPES.NORMAL && (
+                  <div className="flex gap-1">
+                    <p className="font-medium text-md ">{e.user.name} </p>{" "}
+                    <div>:</div>
+                  </div>
+                )}
+                <p className=" overflow-x-hidden">{e.message}</p>
               </div>
             );
           })}
@@ -64,11 +79,16 @@ export default function ChatWindow({ socket, chats, player }: Props) {
           <input
             value={input}
             onKeyDown={handleInputKeyDown}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              if (
+                e.target.value.length <= parseInt(process.env.MAX_WORD_LENGTH!)
+              )
+                setInput(e.target.value);
+            }}
             type="text"
             disabled={player?.isTurnPlayer || player?.hasGuessedCurLap}
             autoFocus
-            className="border-2"
+            className="border-2 "
           />
           <button onClick={submitAnswer}>Submit</button>
         </div>

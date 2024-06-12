@@ -18,16 +18,13 @@ export default function NavBar({
   let a = new Array(word.wordLength).fill(0);
 
   return (
-    <div className="flex item-center justify-around border-2">
-      <div>
-        <div>{clock}</div>
-        <div>
-          Round {roundData.curRound} of {roundData.totalRounds}
-        </div>
+    <div className="flex items-center w-[100%] justify-between border bg-black text-white px-6 py-2 rounded-md font-domine">
+      <div className="flex flex-col items-center">
+        <div className="text-2xl">{clock}</div>
       </div>
-      <div>
-        <div>Guess this</div>
-        <div>
+      <div className="flex flex-col items-center text-xl">
+        <div className="font-medium">Guess this</div>
+        <div className="font-semibold font-roboto ">
           {player?.isTurnPlayer ? (
             word.word
           ) : (
@@ -50,7 +47,12 @@ export default function NavBar({
           )}
         </div>
       </div>
-      <div>setting</div>
+      <div className="flex flex-col items-center text-lg">
+        <div className="font-bold">
+          {roundData.curRound} of {roundData.totalRounds}
+        </div>
+        <div>Round</div>
+      </div>
     </div>
   );
 }
