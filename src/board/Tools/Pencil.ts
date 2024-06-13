@@ -26,7 +26,15 @@ export default class Pencil {
     for (const path of this.paths) {
       if (path.length > 0 && this.context) {
         for (let i = 0; i < path.length - 1; i++) {
-          this.drawLine(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
+       
+          this.drawLine(
+            path[i].x,
+            path[i].y,
+            path[i + 1].x,
+            path[i + 1].y,
+            path[i].stroke ,
+            path[i].strokeColor
+          );
         }
       }
     }

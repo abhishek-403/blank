@@ -5,6 +5,8 @@ export type RectangleProps = {
   pos: Pos;
   width: number;
   height: number;
+  stroke?: number;
+  strokeColor?: string;
 };
 
 export default class Rectangle {
@@ -13,7 +15,7 @@ export default class Rectangle {
 
   stroke: number = 1;
   strokeColor: string = "black";
-  
+
   currentRect?: RectangleProps;
   rects: RectangleProps[] = [];
   context: CanvasRenderingContext2D | null = null;
@@ -39,6 +41,9 @@ export default class Rectangle {
   }
   drawStoredRectangles() {
     this.rects.forEach((rectangle) => {
+      if (!this.context) return;
+      this.context.strokeStyle = rectangle.strokeColor || this.strokeColor;
+      this.context.lineWidth = rectangle.stroke || this.stroke;
       this.context?.strokeRect(
         rectangle.pos.x,
         rectangle.pos.y,
@@ -66,6 +71,8 @@ export default class Rectangle {
       },
       width: width,
       height: height,
+      stroke: this.stroke,
+      strokeColor: this.strokeColor,
     };
     this.rects.push(newRectangle);
   }
@@ -76,6 +83,8 @@ export default class Rectangle {
     const height = y - this.startY;
 
     this.clearCanvas();
+    this.context.strokeStyle = this.strokeColor;
+    this.context.lineWidth = this.stroke;
     this.context.strokeRect(this.startX, this.startY, width, height);
   }
 
