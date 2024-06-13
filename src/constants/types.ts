@@ -52,7 +52,6 @@ export type EachUser = {
 
 export type CanvasState = {
   pencil: Pos[][];
-  rects: RectangleProps[];
   fill:FillProps[]
 };
 export interface Pos {

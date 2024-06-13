@@ -80,12 +80,6 @@ export default function Canvas({ isDisabled }: Props) {
           >
             Pencil
           </button>
-          {/* <button
-            onClick={() => board.changeTool(Tools.RECTANGLE)}
-            ref={rectRef}
-          >
-            Rectangle
-          </button> */}
           <button
             onClick={() => {
               board.clearCanvas();
@@ -94,11 +88,19 @@ export default function Canvas({ isDisabled }: Props) {
           >
             Clear
           </button>
+          <button 
+          className="m-3"
+            onClick={() => {
+              board.undoState();
+            }}
+          >
+            Undo
+          </button>
           <div className="flex cursor-pointer">
-            {colorPalette.map((color,i) => {
+            {colorPalette.map((color, i) => {
               return (
                 <div
-                key={i}
+                  key={i}
                   style={{ backgroundColor: color }}
                   className={`w-8 h-8`}
                   onClick={() => {
@@ -120,9 +122,11 @@ export default function Canvas({ isDisabled }: Props) {
               max="20"
             />
           </div>
-          <div onClick={()=>{
-            board.changeTool(Tools.FILL)
-          }}>
+          <div
+            onClick={() => {
+              board.changeTool(Tools.FILL);
+            }}
+          >
             Fill
           </div>
         </div>

@@ -24,7 +24,7 @@ export default function NavBar({
       </div>
       <div className="flex flex-col items-center text-xl">
         <div className="font-medium">Guess this</div>
-        <div className="font-semibold font-roboto ">
+        <div className="font-medium font-roboto ">
           {player?.isTurnPlayer ? (
             word.word
           ) : (

@@ -4,7 +4,7 @@ export default class Pencil {
   paths: Pos[][] = [];
 
   strokeColor: string = "#000000";
-  stroke: number = 1;
+  stroke: number = 5;
 
   currLine: Pos[] = [];
   context: CanvasRenderingContext2D | null = null;
@@ -39,6 +39,7 @@ export default class Pencil {
     }
   }
   updateState(state: Pos[][]) {
+    // this.clean();
     this.paths = state;
     this.drawStoredLines();
   }

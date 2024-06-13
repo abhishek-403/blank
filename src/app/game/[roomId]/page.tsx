@@ -263,7 +263,7 @@ function listenSocketMessages(
       // canvas
 
       case DRAWING_ON_CANVAS:
-        board.drawingOnBoard(message.payload.drawingStat);
+        board.drawingOnBoard(message.payload.drawingState);
         break;
 
       case UPDATE_CANVAS:
@@ -280,7 +280,6 @@ function addAllListners(socket: WebSocket, params: Params) {
   board.addEventListener(STATE_CHANGE, (e: any) => {
     const state = {
       pencil: board.pencil.paths,
-      rects: board.rectangle.rects,
       fill: board.paths.fill,
     };
 
@@ -297,7 +296,6 @@ function addAllListners(socket: WebSocket, params: Params) {
   board.addEventListener(DRAWING_ON_CANVAS, (e: any) => {
     const state = {
       pencil: board.pencil.currLine,
-      rects: board.rectangle.rects,
       fill: board.paths.fill,
     };
 
