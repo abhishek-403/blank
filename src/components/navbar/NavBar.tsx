@@ -19,7 +19,7 @@ export default function NavBar({
 
   return (
     <div className="flex items-center w-[100%] justify-between border bg-black text-white px-6 py-2 rounded-md font-domine">
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center w-[70px]">
         <div className="text-2xl">{clock}</div>
       </div>
       <div className="flex flex-col items-center text-xl">

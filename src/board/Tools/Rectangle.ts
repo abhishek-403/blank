@@ -8,22 +8,34 @@ export type RectangleProps = {
 };
 
 export default class Rectangle {
-  stroke: number = 1;
   private startX: number;
   private startY: number;
+
+  stroke: number = 1;
   strokeColor: string = "black";
+  
   currentRect?: RectangleProps;
   rects: RectangleProps[] = [];
   context: CanvasRenderingContext2D | null = null;
-  canvasWidth:number=0;
-  canvasHeight:number=0;
+  canvasWidth: number = 0;
+  canvasHeight: number = 0;
   constructor() {
     this.startX = 0;
     this.startY = 0;
   }
-  intiCanvas(width:number,height:number){
-    this.canvasWidth= width;
-    this.canvasHeight= height;
+
+  setProperties(strokeColor?: string, stroke?: number) {
+    if (strokeColor) {
+      this.strokeColor = strokeColor;
+    }
+    if (stroke) {
+      this.stroke = stroke;
+    }
+  }
+
+  intiCanvas(width: number, height: number) {
+    this.canvasWidth = width;
+    this.canvasHeight = height;
   }
   drawStoredRectangles() {
     this.rects.forEach((rectangle) => {
@@ -68,10 +80,9 @@ export default class Rectangle {
   }
 
   clearCanvas() {
-    this.context?.clearRect(0, 0, this.canvasWidth,this.canvasHeight);
+    this.context?.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
   }
-  clean(){
-    this.rects=[];
-    
+  clean() {
+    this.rects = [];
   }
 }

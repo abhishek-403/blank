@@ -10,6 +10,8 @@ import { CanvasState } from "@/constants/types";
 export type Pos = {
   x: number;
   y: number;
+  stroke?:number;
+  strokeColor?:string;
 };
 export enum Tools {
   PENCIL,
@@ -25,10 +27,10 @@ export type BoardPaths = {
 
 export default class Board extends EventTarget {
   paths: BoardPaths = { pencil: [], rectangle: [] };
-  mousePos: Pos = { x: 0, y: 0 };
   pencil = new Pencil();
   rectangle = new Rectangle();
   activeTool: Tools = Tools.PENCIL;
+  mousePos: Pos = { x: 0, y: 0 };
 
   width: number;
   height: number;
@@ -40,6 +42,12 @@ export default class Board extends EventTarget {
     this.width = width;
     this.height = height;
     this.rectangle.intiCanvas(width, height);
+  }
+
+  setProperties(strokeColor?: string, stroke?: number) {
+    this.pencil.setProperties(strokeColor,stroke);
+    this.rectangle.setProperties(strokeColor,stroke);
+  
   }
 
   updateState(state: CanvasState) {

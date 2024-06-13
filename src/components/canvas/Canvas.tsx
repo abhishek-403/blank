@@ -1,6 +1,10 @@
 "use client";
 import Board, { Tools } from "@/board";
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from "@/constants/messages";
+import {
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  colorPalette,
+} from "@/constants/messages";
 import React, { useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -88,8 +92,21 @@ export default function Canvas({ isDisabled }: Props) {
               board.dispatchClearCanvas();
             }}
           >
-            clear
+            Clear
           </button>
+          <div className="flex cursor-pointer">
+            {colorPalette.map((color) => {
+              return (
+                <div
+                  style={{ backgroundColor: color }}
+                  className={`w-8 h-8`}
+                  onClick={() => {
+                    board.setProperties(color);
+                  }}
+                ></div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

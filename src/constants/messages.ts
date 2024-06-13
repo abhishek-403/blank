@@ -35,3 +35,6 @@ export const DISPLAY_CHOOSEN_WORD_TO_ALL = "display_choosen_word_to_all";
 export const RESTART_GAME = "restart_game";
 export const WORD_CHOOSEN_ACK = "word_choosen_ack";
 export const GENERAL_CLOCK = "general_clock";
+
+
+export const colorPalette = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FFA500"];
