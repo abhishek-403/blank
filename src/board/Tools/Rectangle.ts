@@ -14,7 +14,7 @@ export default class Rectangle {
   private startY: number;
 
   stroke: number = 1;
-  strokeColor: string = "black";
+  strokeColor: string = "#000000";
 
   currentRect?: RectangleProps;
   rects: RectangleProps[] = [];

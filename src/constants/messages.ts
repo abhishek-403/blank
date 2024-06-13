@@ -37,4 +37,11 @@ export const WORD_CHOOSEN_ACK = "word_choosen_ack";
 export const GENERAL_CLOCK = "general_clock";
 
 
-export const colorPalette = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FFA500"];
+export const colorPalette = [
+  "#FF0000",
+  "#00FF00",
+  "#0000FF",
+  "#FFFF00",
+  "#FFA500",
+  "#000000",
+];

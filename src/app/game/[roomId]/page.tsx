@@ -281,6 +281,7 @@ function addAllListners(socket: WebSocket, params: Params) {
     const state = {
       pencil: board.pencil.paths,
       rects: board.rectangle.rects,
+      fill: board.paths.fill,
     };
 
     socket.send(
@@ -297,6 +298,7 @@ function addAllListners(socket: WebSocket, params: Params) {
     const state = {
       pencil: board.pencil.currLine,
       rects: board.rectangle.rects,
+      fill: board.paths.fill,
     };
 
     socket.send(

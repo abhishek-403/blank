@@ -1,3 +1,5 @@
+import { FillProps } from "@/board";
+
 export type User = {
   id: string;
   socket: WebSocket;
@@ -51,6 +53,7 @@ export type EachUser = {
 export type CanvasState = {
   pencil: Pos[][];
   rects: RectangleProps[];
+  fill:FillProps[]
 };
 export interface Pos {
   x: number;

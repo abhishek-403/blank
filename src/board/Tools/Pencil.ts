@@ -3,7 +3,7 @@ import { Pos } from "..";
 export default class Pencil {
   paths: Pos[][] = [];
 
-  strokeColor: string = "black";
+  strokeColor: string = "#000000";
   stroke: number = 1;
 
   currLine: Pos[] = [];
@@ -26,13 +26,12 @@ export default class Pencil {
     for (const path of this.paths) {
       if (path.length > 0 && this.context) {
         for (let i = 0; i < path.length - 1; i++) {
-       
           this.drawLine(
             path[i].x,
             path[i].y,
             path[i + 1].x,
             path[i + 1].y,
-            path[i].stroke ,
+            path[i].stroke,
             path[i].strokeColor
           );
         }
@@ -57,6 +56,8 @@ export default class Pencil {
     this.context.beginPath();
     this.context.moveTo(x1, y1);
     this.context.lineTo(x2, y2);
+    this.context.lineCap = "round";
+    this.context.lineJoin = "round";
     this.context.strokeStyle = strokeColor || this.strokeColor;
     this.context.lineWidth = stroke || this.stroke;
     this.context.stroke();
