@@ -110,7 +110,7 @@ export default function GamePage() {
   }, [name]);
 
   return (
-    <div className="flex  flex-col gap-1 ">
+    <div className="flex flex-col gap-1  ">
       <div>
         <NavBar
           roundData={roundData}
@@ -120,11 +120,11 @@ export default function GamePage() {
           gameStage={gameStage}
         />
       </div>
-      <div className="flex  overflow-auto w-full h-[100%] gap-1 justify-center">
+      <div className="flex overflow-auto w-full  gap-2 justify-center ">
         <div>
           <ParticipantsWindow standings={standings} />
         </div>
-        <div className="relative w-[100%]">
+        <div className="flex justify-center">
           <SharedBoardScreen
             word={word}
             gameStage={gameStage}

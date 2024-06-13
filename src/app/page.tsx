@@ -17,7 +17,7 @@ function Home() {
       const data = await axios.post("http://localhost:3001/createroom");
 
       const res = data.data;
-      router.replace(`/game/${res.roomId}/?name=${name}`);
+      router.push(`/game/${res.roomId}/?name=${name}`);
     } catch (e) {
       console.log(e);
     }
@@ -29,7 +29,7 @@ function Home() {
     //   router.replace(roomId);
     // } else {
     // }
-    router.replace(`/game/${roomId}/?name=${name}`);
+    router.push(`/game/${roomId}/?name=${name}`);
   }
 
   useEffect(() => {
@@ -117,7 +117,7 @@ function Home() {
 
 export default function App() {
   return (
-    <Suspense>
+    <Suspense >
       <Home />
     </Suspense>
   );

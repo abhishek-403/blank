@@ -79,13 +79,11 @@ export default class Board extends EventTarget {
       pencil: rempencil,
       fill: remfill,
     });
-    console.log("dddii");
 
     this.dispatchEvent(new Event(STATE_CHANGE));
   }
 
   updateState(state: CanvasState) {
-    
     this.context?.clearRect(0, 0, this.width, this.height);
     this.pencil.updateState(state.pencil);
     this.paths.fill = state.fill;

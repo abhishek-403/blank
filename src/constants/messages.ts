@@ -35,13 +35,29 @@ export const DISPLAY_CHOOSEN_WORD_TO_ALL = "display_choosen_word_to_all";
 export const RESTART_GAME = "restart_game";
 export const WORD_CHOOSEN_ACK = "word_choosen_ack";
 export const GENERAL_CLOCK = "general_clock";
-
-
 export const colorPalette = [
-  "#FF0000",
-  "#00FF00",
-  "#0000FF",
-  "#FFFF00",
-  "#FFA500",
+  "#ef130b",
+  "#cc774d",
+  "#740b07",
+  "#231fd3",
+  "#00ff91",
+  "#e8a200",
+  "#00b2ff",
+  "#ff7100",
+  "#df69a7",
+  "#873554",
+  "#00785d",
+  "#ffe400",
+  "#c23800",
+  "#a300ba",
+  "#00cc00",
   "#000000",
+  "#ffffff",,
+  "#a0b3d1",
+  "#f9fafc",
+  "#040a12",
+  "#a2b5d2",
+  "#9c512f",
+  "#2b518f",
+  "#4b3c41",
 ];

@@ -27,7 +27,6 @@ export default function SharedBoardScreen({
   standings,
   word,
 }: Props) {
-  const router = useRouter();
   const params = useParams();
   const [isDisabled, setIsDisabled] = useState<boolean>(
     !player?.isTurnPlayer || false
@@ -59,9 +58,9 @@ export default function SharedBoardScreen({
   }
 
   return (
-    <div className="m-4 border-2  bg-white">
-      <button onClick={() => router.push("/")}>back</button>
-      <div className="relative w-[100%]">
+    <div className="m-2 border-2  bg-white w-full h-fit">
+      {/* <button onClick={() => router.push("/")}>back</button> */}
+      <div className="relative ">
         <Canvas isDisabled={isDisabled} />
         <div
           style={{
@@ -70,7 +69,7 @@ export default function SharedBoardScreen({
                 ? "flex"
                 : "none",
           }}
-          className="absolute z-2   h-full w-full top-0 left-0 items-center justify-center "
+          className="absolute z-2  bg-[#615b5b] top-0 left-0 items-center justify-center w-full h-full  animate-slideDown"
         >
           <GameSettings
             isRoomAdmin={player?.isRoomAdmin}
@@ -88,7 +87,7 @@ export default function SharedBoardScreen({
                 ? "flex"
                 : "none",
           }}
-          className="absolute z-2   h-full w-full top-0 left-0 items-center justify-center"
+          className=" absolute z-2 bg-[#615b5b] animate-slideDown  h-full w-full top-0 left-0 items-center  justify-center "
         >
           {gameStage === GAME_STAGE.END ? (
             <EndScreen
@@ -108,7 +107,7 @@ export default function SharedBoardScreen({
                       <div
                         key={i}
                         onClick={() => wordSelected(i)}
-                        className="p-4 border-2 text-black bg-white text-xl cursor-pointer hover:bg-zinc-100 "
+                        className="p-4 border-2 text-black rounded-md bg-white text-xl cursor-pointer hover:bg-zinc-100 "
                       >
                         {word.word}
                       </div>
@@ -116,7 +115,9 @@ export default function SharedBoardScreen({
                   })}
                 </div>
               ) : (
-                <div>waiting</div>
+                <div className="p-4 text-xl bg-white rounded-lg">
+                  waiting...
+                </div>
               )}
             </div>
           )}
@@ -130,7 +131,11 @@ type InterLapScreenProps = {
   word: word;
 };
 function InterLapScreen({ word }: InterLapScreenProps) {
-  return <div className="text-black">The word was {word.word}</div>;
+  return (
+    <div className="text-black bg-white p-4 text-xl font-domine rounded-lg">
+      The word was {word.word}
+    </div>
+  );
 }
 
 type EndScreenProps = {
@@ -155,21 +160,33 @@ function EndScreen({ standings, isRoomAdmin, socket, roomId }: EndScreenProps) {
     );
   }
   return (
-    <div>
-      <div className="flex flex-col gap-4 overflow-auto">
+    <div className="h-full flex flex-col ">
+      <div className="overflow-auto flex gap-1 flex-col items-center justify-center  h-[100%] ">
         {standings.map((user, i) => {
           return (
-            <div key={i} className="flex flex-col items-center border-2 ">
-              <div className="flex gap-1 text-xl">
-                <strong>#{user.rank}</strong>
-                <p className="capitalize">{user.user.name}</p>
+            <div
+              key={i}
+              className="flex font-roboto justify-between  border bg-white rounded-lg   py-1 px-3 w-[200px] "
+            >
+              <div className="flex text-2xl font-medium">
+                #{user.rank == 0 ? 1 : user.rank}
               </div>
-              <p>{user.points}</p>
+              <div className="flex items-center flex-col justify-center text-lg">
+                <div className="font-medium text-2xl ">{user.user.name}</div>
+                <div>{user.points} points</div>
+              </div>
+              <div></div>
             </div>
           );
         })}
       </div>
-      <div>{isRoomAdmin && <button onClick={toHome}>Home</button>}</div>
+      <div className="relative  ">
+        {isRoomAdmin && (
+          <div className="px-4 absolute py-2 mt-4 bg-violet-400 w-full text-white  rounded-md bottom-[3px] text-center">
+            {<button onClick={toHome}>Home</button>}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -177,7 +194,7 @@ function EndScreen({ standings, isRoomAdmin, socket, roomId }: EndScreenProps) {
 const generateOptions = () => {
   let timeOptions = [];
   const roundOptions: number[] = [1, 2, 3, 4, 5];
-  for (let i = 15; i <= 120; i += 15) {
+  for (let i = 15; i <= 120; i += i) {
     timeOptions.push(i);
   }
   return { timeOptions, roundOptions };
@@ -235,19 +252,19 @@ function GameSettings({
   };
 
   return (
-    <div className="flex flex-col gap-4 overflow-auto z-2">
-      <div className="flex flex-col items-center justify-center  p-4 bg-gray-100">
-        <div className="w-full max-w-xs">
+    <div className="flex flex-col gap-4 overflow-auto z-2 w-fit">
+      <div className="flex flex-col items-center justify-center  p-4 bg-gray-100 rounded-lg w-[260px] shadow-xl">
+        <div className="w-full">
           <label
             htmlFor="field1"
-            className="block text-sm font-medium text-gray-700"
+            className="block font-medium text-gray-700 text-lg "
           >
             Select Time
           </label>
           <select
             id="field1"
             name="field1"
-            className="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="block w-full mt-2 rounded-md border-black shadow-sm text-xl p-2 "
             value={time}
             onChange={handleField1Change}
           >
@@ -261,26 +278,28 @@ function GameSettings({
         <div className="w-full max-w-xs mt-4">
           <label
             htmlFor="field2"
-            className="block text-sm font-medium text-gray-700"
+            className="block font-medium text-gray-700 text-lg"
           >
             Select Rounds
           </label>
           <select
             id="field2"
             name="field2"
-            className="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="block w-full mt-2 rounded-md border-black shadow-sm text-xl p-2"
             value={totalRound}
             onChange={handleField2Change}
           >
             {roundOptions.map((value) => (
-              <option key={value} value={value}>
+              <option className="" key={value} value={value}>
                 {value}
               </option>
             ))}
           </select>
         </div>
       </div>
-      <div>{isRoomAdmin && <button onClick={startGame}>Start</button>}</div>
+      <div className="w-fit bg-white  py-2 px-6 font-roboto text-xl rounded-lg mx-auto">
+        {isRoomAdmin && <button onClick={startGame}>Start</button>}
+      </div>
     </div>
   );
 }

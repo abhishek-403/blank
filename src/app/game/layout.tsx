@@ -9,7 +9,7 @@ export default function layout({ children }: Props) {
   return (
     <div>
       <div
-        className="flex border-2 border-black overflow-auto w-full h-[100vh] gap-10 justify-center"
+        className="flex border-2 border-black overflow-auto w-full px-20 h-[100vh] gap-4 justify-center"
         style={{
           backgroundImage: `url(${bgImg.src})`,
           backgroundRepeat: "repeat",
@@ -17,7 +17,7 @@ export default function layout({ children }: Props) {
           backgroundPosition: "center",
         }}
       >
-        <div className="  mt-2">{children}</div>
+        <div className="mt-2">{children}</div>
       </div>
     </div>
   );
