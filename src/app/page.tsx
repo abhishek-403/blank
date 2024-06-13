@@ -25,11 +25,11 @@ function Home() {
   async function joinRoom() {
     if (!name || !roomId) return;
 
-    if (roomId.includes("http")) {
-      router.replace(roomId);
-    } else {
-      router.replace(`/game/${roomId}/?name=${name}`);
-    }
+    // if (roomId.includes("http")) {
+    //   router.replace(roomId);
+    // } else {
+    // }
+    router.replace(`/game/${roomId}/?name=${name}`);
   }
 
   useEffect(() => {
@@ -60,12 +60,9 @@ function Home() {
                 create ? createRoom() : joinRoom();
               }
             }}
-            placeholder={create ? "Name" : "URL"}
+            placeholder={create ? "Nick name" : "Nick name"}
             onChange={(e) => {
-              if (
-                e.target.value.length <= 14
-              )
-                setName(e.target.value);
+              if (e.target.value.length <= 14) setName(e.target.value);
             }}
           />
           {/* <input

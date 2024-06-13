@@ -48,12 +48,12 @@ export default function ChatWindow({ socket, chats, player }: Props) {
   return (
     <div>
       <div className="relative h-[600px] bg-white flex flex-col w-[320px] border border-[#121212]">
-        <div className="w-full mt-auto mb-8  overflow-y-auto  ">
+        <div className="w-full mt-auto mb-10  overflow-y-auto  ">
           {chats.map((e, i) => {
             return (
               <div
                 key={i}
-                className="flex font-roboto flex-row gap-1 p-1  px-2 border-t rounded  items-center"
+                className="flex flex-row gap-1 p-1  px-2 border-t rounded  items-center"
                 style={{
                   background:
                     e.messageType === MESSAGE_TYPES.ERROR
@@ -64,9 +64,8 @@ export default function ChatWindow({ socket, chats, player }: Props) {
                 }}
               >
                 {e.messageType === MESSAGE_TYPES.NORMAL && (
-                  <div className="flex gap-1">
-                    <p className="font-medium text-md ">{e.user.name} </p>{" "}
-                    <div>:</div>
+                  <div className="font-roboto flex gap-1">
+                    <p className=" text-md ">{e.user.name} </p> <div>:</div>
                   </div>
                 )}
                 <p className=" overflow-x-hidden">{e.message}</p>
@@ -75,7 +74,7 @@ export default function ChatWindow({ socket, chats, player }: Props) {
           })}
           <div ref={messagesEndRef}></div>
         </div>
-        <div className="flex gap-2 absolute bottom-[0px]  ">
+        <div className="flex  absolute bottom-[0px] w-full p-1  ">
           <input
             value={input}
             onKeyDown={handleInputKeyDown}
@@ -88,9 +87,11 @@ export default function ChatWindow({ socket, chats, player }: Props) {
             type="text"
             disabled={player?.isTurnPlayer || player?.hasGuessedCurLap}
             autoFocus
-            className="border-2 "
+            className="border-2 w-full border-indigo-300 rounded-md px-2"
           />
-          <button onClick={submitAnswer}>Submit</button>
+          <button className="border p-1 rounded-md" onClick={submitAnswer}>
+            Submit
+          </button>
         </div>
       </div>
     </div>
