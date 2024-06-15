@@ -5,15 +5,19 @@ import {
   CANVAS_WIDTH,
   colorPalette,
 } from "@/constants/messages";
+import { IoIosColorFill, IoIosUndo } from "react-icons/io";
+import { FaPencil } from "react-icons/fa6";
 import React, { useEffect, useRef, useState } from "react";
-
+import { MdDelete } from "react-icons/md";
 type Props = {
   isDisabled: boolean;
 };
 export const newBoard = new Board(CANVAS_WIDTH, CANVAS_HEIGHT);
 export default function Canvas({ isDisabled }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const pencilRef = useRef<HTMLButtonElement>(null);
+  const pencilRef = useRef<HTMLDivElement>(null);
+  const [inputVal, setInputVal] = useState<number>(5);
+  const [cursor, setCursor] = useState<string>("dot");
   const [board, setBoard] = useState<any>();
 
   useEffect(() => {
@@ -41,6 +45,7 @@ export default function Canvas({ isDisabled }: Props) {
     if (!board || !canvasRef.current) return;
     const x = e.nativeEvent.offsetX;
     const y = e.nativeEvent.offsetY;
+
     board.handleMouseMove(x, y);
   };
 
@@ -52,7 +57,7 @@ export default function Canvas({ isDisabled }: Props) {
   };
   return (
     <div className=" h-fit w-full ">
-      <div className="relative">
+      <div className={`relative `}>
         <canvas
           ref={canvasRef}
           width={CANVAS_WIDTH}
@@ -60,7 +65,11 @@ export default function Canvas({ isDisabled }: Props) {
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
-          className="border-2 border-black h-full  w-full"
+          className={`border-2 border-black h-full  w-full  cursor-${
+            board?.activeTool === Tools.PENCIL
+              ? "bucket"
+              : "dot"
+          }`}
           id="canvas_id"
         ></canvas>
         <div
@@ -70,15 +79,18 @@ export default function Canvas({ isDisabled }: Props) {
         ></div>
       </div>
 
-      <div style={{ display: isDisabled ? "none" : "flex" }} className="w-full">
-        <div className="w-full flex">
-          <div className="flex flex-wrap cursor-pointer w-[50%] ">
+      <div
+        style={{ display: isDisabled ? "none" : "flex" }}
+        className="w-full "
+      >
+        <div className="w-full flex gap-2 p-1 justify-between items-center cursor-pointer">
+          <div className="flex flex-wrap w-[390px] ">
             {colorPalette.map((color, i) => {
               return (
                 <div
                   key={i}
                   style={{ backgroundColor: color }}
-                  className={`w-8 h-8 border border-black`}
+                  className={`w-[30px] h-[30px] border border-black hover:opacity-70`}
                   onClick={() => {
                     board.setProperties({ strokeColor: color });
                   }}
@@ -86,55 +98,58 @@ export default function Canvas({ isDisabled }: Props) {
               );
             })}
           </div>
-          <div>
-            <div>
-              <input
-                onChange={(e) => {
-                  board.setProperties({ stroke: e.target.value });
-                }}
-                type="range"
-                id="vol"
-                name="vol"
-                min="1"
-                max="20"
-              />
+
+          <div className="flex gap-2 items-center   ">
+            <div
+              onClick={() => {
+                setCursor("dot");
+                board.changeTool(Tools.PENCIL);
+              }}
+              ref={pencilRef}
+              className="text-black border border-[#121212] rounded-lg flex items-center justify-center  px-3 py-2 hover:bg-[#e8e8e8]"
+            >
+              <FaPencil size={22} />
             </div>
-            <div className="flex gap-2 ">
-              <button
-                onClick={() => board.changeTool(Tools.PENCIL)}
-                ref={pencilRef}
-                className="text-black bg-indigo-200  px-4 py-2"
-              >
-                Pencil
-              </button>
-              <div
-                onClick={() => {
-                  board.changeTool(Tools.FILL);
-                }}
-                className="bg-indigo-400  px-4 py-2"
-              >
-                Fill
-              </div>
+            <div
+              onClick={() => {
+                setCursor("bucket");
+                board.changeTool(Tools.FILL);
+              }}
+              className="rounded-lg flex items-center justify-center border border-[#121212]   px-3 py-2 hover:bg-[#e8e8e8]"
+            >
+              <IoIosColorFill size={22} />
             </div>
-          </div>
-          <div className="flex gap-2 h-fit">
+            <div
+              className="rounded-lg  border border-[#121212] flex items-center justify-center  px-3 py-2 hover:bg-[#e8e8e8] "
+              onClick={() => {
+                board.undoState();
+              }}
+            >
+              <IoIosUndo size={22} />
+            </div>
             <div
               onClick={() => {
                 board.clearCanvas();
                 board.dispatchClearCanvas();
               }}
-              className="bg-indigo-400  px-4 py-2"
+              className="rounded-lg  border border-[#121212] flex items-center justify-center  px-3 py-2 hover:bg-[#e8e8e8]"
             >
-              Clear
+              <MdDelete size={22} />
             </div>
-            <div
-              className="bg-indigo-400  px-4 py-2"
-              onClick={() => {
-                board.undoState();
+          </div>
+          <div className="flex flex-col gap-1 items-center justify-center pr-2">
+            <input
+              onChange={(e) => {
+                setInputVal(parseInt(e.target.value));
+                board.setProperties({ stroke: e.target.value });
               }}
-            >
-              Undo
-            </div>
+              type="range"
+              min="1"
+              max="20"
+              className="w-[120px]"
+              value={inputVal}
+            />
+            <div>{inputVal}</div>
           </div>
         </div>
       </div>

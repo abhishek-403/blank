@@ -25,7 +25,9 @@ export default function NavBar({
       <div className="flex flex-col items-center text-xl">
         <div className="font-medium">
           {gameStage === GAME_STAGE.ONGOING && !player?.hasGuessedCurLap
-            ? player?.isTurnPlayer ? "Draw":"Guess this"
+            ? player?.isTurnPlayer
+              ? "Draw"
+              : "Guess this"
             : ""}
         </div>
         <div className="font-medium font-roboto ">
@@ -40,7 +42,7 @@ export default function NavBar({
               ) : gameStage === GAME_STAGE.WAITING ? (
                 ""
               ) : (
-                word.wordLength>0 && (
+                word.wordLength > 0 && (
                   <div className="flex gap-4">
                     <div className="flex gap-1">
                       {a.map((_t, i) => {

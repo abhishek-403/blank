@@ -122,6 +122,7 @@ export default class Board extends EventTarget {
     }
   }
   handleMouseMove(x: number, y: number) {
+  
     if (this.isDrawing) {
       if (this.activeTool == Tools.PENCIL) {
         this.pencil.handleMouseMove(x, y);

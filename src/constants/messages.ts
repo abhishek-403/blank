@@ -35,29 +35,32 @@ export const DISPLAY_CHOOSEN_WORD_TO_ALL = "display_choosen_word_to_all";
 export const RESTART_GAME = "restart_game";
 export const WORD_CHOOSEN_ACK = "word_choosen_ack";
 export const GENERAL_CLOCK = "general_clock";
+
 export const colorPalette = [
-  "#ef130b",
-  "#cc774d",
-  "#740b07",
-  "#231fd3",
-  "#00ff91",
-  "#e8a200",
-  "#00b2ff",
-  "#ff7100",
-  "#df69a7",
-  "#873554",
-  "#00785d",
-  "#ffe400",
-  "#c23800",
-  "#a300ba",
-  "#00cc00",
-  "#000000",
-  "#ffffff",,
-  "#a0b3d1",
-  "#f9fafc",
-  "#040a12",
-  "#a2b5d2",
-  "#9c512f",
-  "#2b518f",
-  "#4b3c41",
+  "#000000", // Black
+  "#FFFFFF", // White
+  "#FF0000", // Red
+  "#00FF00", // Lime
+  "#0000FF", // Blue
+  "#FFFF00", // Yellow
+  "#00FFFF", // Cyan
+  "#FF00FF", // Magenta
+  "#C0C0C0", // Silver
+  "#808080", // Gray
+  "#800000", // Maroon
+  "#808000", // Olive
+  "#008000", // Green
+  "#800080", // Purple
+  "#008080", // Teal
+  "#000080", // Navy
+  "#FFA500", // Orange
+  "#A52A2A", // Brown
+  "#FFFFF0", // Ivory
+  "#F0E68C", // Khaki
+  "#008B8B", // Dark Cyan
+  "#B8860B", // Dark Golden Rod
+  "#32CD32", // Lime Green
+  "#FFD700", // Gold
+  "#48D1CC", // Medium Turquoise
+  "#87CEEB", // Sky Blue
 ];

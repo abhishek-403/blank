@@ -3,6 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html{
+
+  width: 1440px;
+}
 :root {
   margin: 0;
   padding: 0;

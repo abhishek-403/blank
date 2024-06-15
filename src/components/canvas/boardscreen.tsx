@@ -71,7 +71,7 @@ export default function SharedBoardScreen({
                 ? "flex"
                 : "none",
           }}
-          className="absolute z-2  bg-[#615b5b] top-0 left-0 items-center justify-center w-full h-full  animate-slideDown"
+          className="absolute z-2  bg-[#00000099] top-0 left-0 items-center justify-center w-full h-full  animate-slideDown"
         >
           <GameSettings
             isRoomAdmin={player?.isRoomAdmin}
@@ -89,7 +89,7 @@ export default function SharedBoardScreen({
                 ? "flex"
                 : "none",
           }}
-          className=" absolute z-2 bg-[#615b5b] animate-slideDown  h-full w-full top-0 left-0 items-center  justify-center "
+          className=" absolute z-2 bg-[#00000099] animate-slideDown  h-full w-full top-0 left-0 items-center  justify-center "
         >
           {gameStage === GAME_STAGE.END ? (
             <EndScreen
@@ -170,7 +170,7 @@ function EndScreen({
     );
   }
   return (
-    <div className="h-full flex flex-col ">
+    <div className="h-full flex flex-col  ">
       <div className="overflow-auto flex gap-1 flex-col items-center justify-center  h-[100%] ">
         {standings.map((user, i) => {
           return (
@@ -266,7 +266,7 @@ function GameSettings({
 
   return (
     <div className="flex flex-col gap-4 overflow-auto z-2 w-fit">
-      <div className="flex flex-col items-center justify-center  p-4 bg-gray-100 rounded-lg w-[260px] shadow-xl">
+      <div className="flex flex-col items-center justify-center  p-4 bg-gray-100 rounded-lg w-[260px] shadow-md">
         <div className="w-full">
           <label
             htmlFor="field1"
@@ -310,8 +310,11 @@ function GameSettings({
           </select>
         </div>
       </div>
-      <div className="w-fit bg-white  py-2 px-6 font-roboto text-xl rounded-lg mx-auto">
-        {isRoomAdmin && <button onClick={startGame}>Start</button>}
+      <div
+        onClick={startGame}
+        className="w-fit cursor-pointer bg-white  py-2 px-6 font-roboto text-xl rounded-lg mx-auto"
+      >
+        {isRoomAdmin && <button>Start</button>}
       </div>
     </div>
   );
