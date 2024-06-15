@@ -18,6 +18,7 @@ type Props = {
   gameStage: GAME_STAGE;
   standings: Player[] | undefined;
   word: word;
+  myId: string;
 };
 export default function SharedBoardScreen({
   wordList,
@@ -26,6 +27,7 @@ export default function SharedBoardScreen({
   gameStage,
   standings,
   word,
+  myId,
 }: Props) {
   const params = useParams();
   const [isDisabled, setIsDisabled] = useState<boolean>(
@@ -95,6 +97,7 @@ export default function SharedBoardScreen({
               standings={standings}
               isRoomAdmin={player?.isRoomAdmin}
               socket={socket}
+              myId={myId}
             />
           ) : gameStage === GAME_STAGE.INTERLAP ? (
             <InterLapScreen word={word} />
@@ -143,8 +146,15 @@ type EndScreenProps = {
   isRoomAdmin: boolean | undefined;
   socket: WebSocket | null;
   roomId: string | string[];
+  myId: string;
 };
-function EndScreen({ standings, isRoomAdmin, socket, roomId }: EndScreenProps) {
+function EndScreen({
+  standings,
+  isRoomAdmin,
+  socket,
+  roomId,
+  myId,
+}: EndScreenProps) {
   if (!standings) return;
 
   function toHome() {
@@ -172,7 +182,10 @@ function EndScreen({ standings, isRoomAdmin, socket, roomId }: EndScreenProps) {
                 #{user.rank == 0 ? 1 : user.rank}
               </div>
               <div className="flex items-center flex-col justify-center text-lg">
-                <div className="font-medium text-2xl ">{user.user.name}</div>
+                <div className="flex items-center gap-2">
+                  <div className="font-medium text-2xl">{user.user.name}</div>
+                  <div>{myId === user.user.id ? "(You)" : ""}</div>
+                </div>
                 <div>{user.points} points</div>
               </div>
               <div></div>

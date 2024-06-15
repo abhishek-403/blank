@@ -14,7 +14,7 @@ export interface chat {
 export enum MESSAGE_TYPES {
   HASGUESSED,
   NORMAL,
-  ERROR
+  ERROR,
 }
 export interface Player {
   user: User;
@@ -47,12 +47,13 @@ export type EachUser = {
   points: number;
   rank: number;
   hasGuessedCurLap: boolean;
+  isMe:boolean;
+isDrawing:boolean|undefined
 };
-
 
 export type CanvasState = {
   pencil: Pos[][];
-  fill:FillProps[]
+  fill: FillProps[];
 };
 export interface Pos {
   x: number;
@@ -63,4 +64,3 @@ export interface RectangleProps {
   width: number;
   height: number;
 }
-

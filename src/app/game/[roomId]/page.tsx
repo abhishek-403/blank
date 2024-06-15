@@ -45,6 +45,7 @@ export default function GamePage() {
   const [standings, setStandings] = useState<Player[]>();
   const [word, setWord] = useState<word>({ word: "", wordLength: 0 });
   const [error, setError] = useState<string | undefined>();
+  const [myId, setmyId] = useState<string>("");
   const [gameStage, setGameStage] = useState<GAME_STAGE>(GAME_STAGE.LOBBY);
   const [roundData, setRoundData] = useState<RoundData>({
     totalRounds: 0,
@@ -90,7 +91,8 @@ export default function GamePage() {
         setGameStage,
         setRoundData,
         setWordList,
-        setWord
+        setWord,
+        setmyId
       );
     } catch (e) {}
     return () => {
@@ -122,7 +124,7 @@ export default function GamePage() {
       </div>
       <div className="flex overflow-auto w-full  gap-2 justify-center ">
         <div>
-          <ParticipantsWindow standings={standings} />
+          <ParticipantsWindow player={player} myId={myId} standings={standings} />
         </div>
         <div className="flex justify-center">
           <SharedBoardScreen
@@ -132,6 +134,7 @@ export default function GamePage() {
             player={player}
             socket={socket}
             standings={standings}
+            myId={myId}
           />
           {/* <input
               type="text"
@@ -162,7 +165,8 @@ function listenSocketMessages(
   setGameStage: React.Dispatch<SetStateAction<GAME_STAGE>>,
   setRoundData: React.Dispatch<SetStateAction<RoundData>>,
   setWordList: React.Dispatch<SetStateAction<word[]>>,
-  setWord: React.Dispatch<SetStateAction<word>>
+  setWord: React.Dispatch<SetStateAction<word>>,
+  setmyId: React.Dispatch<string>
 ) {
   if (!socket) return;
   socket.onmessage = (event) => {
@@ -175,6 +179,7 @@ function listenSocketMessages(
         board.updateState(message.payload.updatedState);
         setChats(message.payload.chats);
         setStandings(message.payload.standings);
+        setmyId(message.payload.userId);
         break;
 
       case INIT_USER:
