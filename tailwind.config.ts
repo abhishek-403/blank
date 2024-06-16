@@ -13,9 +13,9 @@ const config: Config = {
     },
     extend: {
       cursor: {
-        dot: "url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMyIgaGVpZ2h0PSIzIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxjaXJjbGUgY3g9IjEuNSIgY3k9IjEuNSIgcj0iMS41IiBmaWxsPSJibGFjayIgLz48L3N2Zz4=) 1 1, auto",
+        dot: "url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMyIgaGVpZ2h0PSIzIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxjaXJjbGUgY3g9IjEuNSIgY3k9IjEuNSIgcj0iMS41IiBmaWxsPSJibGFjayIgLz48L3N2Zz4=)",
         bucket:
-          "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAABMklEQVR4nNXTvytFYRzH8ddAfqwGTIoVKf4FUgb/gB+LH3HJIkUGheGWLMy6mS3KZLJJWAzKYHAHm0wm+dGp59TtdO65595B+dS35zw9z3n3+X6/z5c/UjuGwzqLnUZBQzjDDZYxhy/8oFgvbATXGAj7RXwH2E8j0EOMh++lFFgcB2jJA5zHNvrxUQUWxys20JYFbMZDcDCIqeD6Ald4TEDfcI/JasDVRJpPOMUe1jGGowT0BKWwtlbCVjJqFsU5RnGcclZEIdxpimDd+KxRs+jpPGec72MXaxGwKwcwK15CnWdwG6dcqJFyFqwXPbjEXWUdF+qEltEX/u1IA6Z1upazypEtpQHzOK10FmsiNCUVmOW0nHAWaxqbYTDkhaY5E9QZOr2VBYwUzfd7eA7VYP9MvzG4qXCZXvVcAAAAAElFTkSuQmCC) 1 1, auto",
+          "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAABMklEQVR4nNXTvytFYRzH8ddAfqwGTIoVKf4FUgb/gB+LH3HJIkUGheGWLMy6mS3KZLJJWAzKYHAHm0wm+dGp59TtdO65595B+dS35zw9z3n3+X6/z5c/UjuGwzqLnUZBQzjDDZYxhy/8oFgvbATXGAj7RXwH2E8j0EOMh++lFFgcB2jJA5zHNvrxUQUWxys20JYFbMZDcDCIqeD6Ald4TEDfcI/JasDVRJpPOMUe1jGGowT0BKWwtlbCVjJqFsU5RnGcclZEIdxpimDd+KxRs+jpPGec72MXaxGwKwcwK15CnWdwG6dcqJFyFqwXPbjEXWUdF+qEltEX/u1IA6Z1upazypEtpQHzOK10FmsiNCUVmOW0nHAWaxqbYTDkhaY5E9QZOr2VBYwUzfd7eA7VYP9MvzG4qXCZXvVcAAAAAElFTkSuQmCC)",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

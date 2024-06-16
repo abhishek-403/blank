@@ -73,7 +73,14 @@ function Home() {
         /> */}
         </div>
         <div className="w-full">
-          {create ? (
+           <button
+              type="submit"
+              className="bg-violet-500 p-2 w-full rounded-md text-xl  text-white  font-medium"
+              onClick={createRoom}
+            >
+              Create room
+            </button>
+          {/* {create ? (
             <button
               type="submit"
               className="bg-violet-500 p-2 w-full rounded-md text-xl  text-white  font-medium"
@@ -89,9 +96,9 @@ function Home() {
             >
               Join room
             </button>
-          )}
+          )} */}
         </div>
-        <div className="w-full">
+        {/* <div className="w-full">
           {create ? (
             <button
               type="submit"
@@ -109,7 +116,7 @@ function Home() {
               Change to Create room
             </button>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );

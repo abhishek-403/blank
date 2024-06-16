@@ -3,12 +3,15 @@ import Board, { Tools } from "@/board";
 import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
+  bucketIcon,
   colorPalette,
+  dotIcon,
 } from "@/constants/messages";
 import { IoIosColorFill, IoIosUndo } from "react-icons/io";
 import { FaPencil } from "react-icons/fa6";
 import React, { useEffect, useRef, useState } from "react";
 import { MdDelete } from "react-icons/md";
+import dot from "@/components/assets/dot-svg.svg";
 type Props = {
   isDisabled: boolean;
 };
@@ -17,7 +20,7 @@ export default function Canvas({ isDisabled }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pencilRef = useRef<HTMLDivElement>(null);
   const [inputVal, setInputVal] = useState<number>(5);
-  const [cursor, setCursor] = useState<string>("dot");
+  const [cursor, setCursor] = useState<string>(dotIcon);
   const [board, setBoard] = useState<any>();
 
   useEffect(() => {
@@ -65,12 +68,11 @@ export default function Canvas({ isDisabled }: Props) {
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
-          className={`border-2 border-black h-full  w-full  cursor-${
-            board?.activeTool === Tools.FILL
-              ? "bucket"
-              : "dot"
-          }`}
+          className={`border-2 border-black h-full  w-full `}
           id="canvas_id"
+          style={{
+            cursor: `url(${cursor}) 3 3, auto`,
+          }}
         ></canvas>
         <div
           id="overlay"
@@ -83,7 +85,7 @@ export default function Canvas({ isDisabled }: Props) {
         style={{ display: isDisabled ? "none" : "flex" }}
         className="w-full "
       >
-        <div className="w-full flex gap-2 p-1 justify-between items-center cursor-pointer">
+        <div className="w-full flex gap-2  justify-between items-center cursor-pointer">
           <div className="flex flex-wrap w-[390px] ">
             {colorPalette.map((color, i) => {
               return (
@@ -102,7 +104,7 @@ export default function Canvas({ isDisabled }: Props) {
           <div className="flex gap-2 items-center   ">
             <div
               onClick={() => {
-                setCursor("dot");
+                setCursor(dotIcon);
                 board.changeTool(Tools.PENCIL);
               }}
               ref={pencilRef}
@@ -112,7 +114,7 @@ export default function Canvas({ isDisabled }: Props) {
             </div>
             <div
               onClick={() => {
-                setCursor("bucket");
+                setCursor(bucketIcon);
                 board.changeTool(Tools.FILL);
               }}
               className="rounded-lg flex items-center justify-center border border-[#121212]   px-3 py-2 hover:bg-[#e8e8e8]"
