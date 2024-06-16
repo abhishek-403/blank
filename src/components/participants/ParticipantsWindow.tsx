@@ -1,12 +1,15 @@
 import { EachUser, Player } from "@/constants/types";
+import { useEffect, useState } from "react";
+import { FaPencil } from "react-icons/fa6";
 
 type Props = {
   standings: Player[] | undefined;
   myId: string;
-  player: Player | undefined;
+  turnPlayerId: string;
 };
 
-export default function ParticipantsWindow({ standings, myId, player }: Props) {
+export default function ParticipantsWindow({ standings, myId, turnPlayerId }: Props) {
+ ;
   return (
     <div className="flex flex-col w-[200px]">
       {standings?.map((u, i) => {
@@ -16,7 +19,7 @@ export default function ParticipantsWindow({ standings, myId, player }: Props) {
           hasGuessedCurLap: u.hasGuessedCurLap,
           points: u.points,
           isMe: myId === u.user.id,
-          isDrawing: player?.isTurnPlayer,
+          isDrawing: turnPlayerId===u.user.id,
         };
 
         return <User key={i} {...user} />;
@@ -35,7 +38,7 @@ function User({
 }: EachUser) {
   return (
     <div
-      className="flex font-roboto justify-between border border-[#121212] w-full py-1 px-3"
+      className="flex font-roboto justify-between items-center border border-[#121212] w-full py-1 px-3"
       style={{ backgroundColor: hasGuessedCurLap ? "#4ade80" : "white" }}
     >
       <div className="flex text-2xl font-medium">#{rank == 0 ? 1 : rank}</div>
@@ -46,7 +49,7 @@ function User({
         </div>
         <div>{points} points</div>
       </div>
-      <div>{isDrawing===true && isMe  ? "d" : ""}</div>
+      <div>{isDrawing === true ? <FaPencil size={22} /> : ""}</div>
     </div>
   );
 }

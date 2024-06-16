@@ -66,7 +66,7 @@ export default function Canvas({ isDisabled }: Props) {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           className={`border-2 border-black h-full  w-full  cursor-${
-            board?.activeTool === Tools.PENCIL
+            board?.activeTool === Tools.FILL
               ? "bucket"
               : "dot"
           }`}

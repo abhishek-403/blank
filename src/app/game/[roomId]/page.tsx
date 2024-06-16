@@ -26,40 +26,58 @@ import {
   WORD_CHOOSEN_ACK,
   WRONG_ANSWER,
 } from "@/constants/messages";
-import { GAME_STAGE, Player, RoundData, chat, word } from "@/constants/types";
+import {
+  GAME_STAGE,
+  Player,
+  RoundData,
+  chat,
+  turnPointsType,
+  word,
+} from "@/constants/types";
 import { useSocket } from "@/hooks/useSocket";
 import CryptoJS from "crypto-js";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
 
 export default function GamePage() {
   const socket = useSocket();
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
   const searchparam = useSearchParams();
 
   const [chats, setChats] = useState<chat[]>([]);
+  const [inviteUrl, setInviteUrl] = useState<string>("");
+  const [turnPlayerId, setTurnPlayerId] = useState<string>("");
   const [clock, setClock] = useState<number>(0);
   const [player, setPlayer] = useState<Player | undefined>();
   const [standings, setStandings] = useState<Player[]>();
   const [word, setWord] = useState<word>({ word: "", wordLength: 0 });
-  const [error, setError] = useState<string | undefined>();
   const [myId, setmyId] = useState<string>("");
+  const [turnPoints, setTurnPoints] = useState<turnPointsType[]>([]);
   const [gameStage, setGameStage] = useState<GAME_STAGE>(GAME_STAGE.LOBBY);
   const [roundData, setRoundData] = useState<RoundData>({
     totalRounds: 0,
     curRound: 0,
   });
+  const [copySuccess, setCopySuccess] = useState<boolean>(false);
   const [wordList, setWordList] = useState<word[]>([
     { word: "", wordLength: 0 },
   ]);
+  // const
 
   useEffect(() => {
     if (!socket) {
       return;
     }
     try {
+      setInviteUrl(window.location.origin + pathname);
       if (!isOpen(socket)) return;
       let userId = Math.random().toString(12).substring(2, 9);
       socket.send(
@@ -87,12 +105,13 @@ export default function GamePage() {
         setClock,
         setStandings,
         setPlayer,
-        setError,
         setGameStage,
         setRoundData,
         setWordList,
         setWord,
-        setmyId
+        setmyId,
+        setTurnPoints,
+        setTurnPlayerId
       );
     } catch (e) {}
     return () => {
@@ -124,18 +143,49 @@ export default function GamePage() {
       </div>
       <div className="flex overflow-auto w-full  gap-2 justify-center ">
         <div>
-          <ParticipantsWindow player={player} myId={myId} standings={standings} />
-        </div>
-        <div className="flex justify-center">
-          <SharedBoardScreen
-            word={word}
-            gameStage={gameStage}
-            wordList={wordList}
-            player={player}
-            socket={socket}
-            standings={standings}
+          <ParticipantsWindow
+            turnPlayerId={turnPlayerId}
             myId={myId}
+            standings={standings}
           />
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className=" ">
+            <SharedBoardScreen
+              word={word}
+              gameStage={gameStage}
+              wordList={wordList}
+              player={player}
+              socket={socket}
+              standings={standings}
+              myId={myId}
+              turnPoints={turnPoints}
+            />
+          </div>
+          <div>
+            {gameStage !== GAME_STAGE.ONGOING && (
+              <div className="flex">
+                <input
+                  className="w-full text-lg p-2"
+                  readOnly
+                  value={inviteUrl}
+                />
+                <div
+                  className="relative bg-green-500 cursor-pointer px-4 text-xl py-2 text-white"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(inviteUrl);
+                      setCopySuccess(true);
+                    } catch (err) {
+                      setCopySuccess(false);
+                    }
+                  }}
+                >
+                  {copySuccess ? <p>Copied!</p> : <p>Copy</p>}
+                </div>
+              </div>
+            )}
+          </div>
           {/* <input
               type="text"
               value={window?.location.href}
@@ -161,12 +211,13 @@ function listenSocketMessages(
   setClock: React.Dispatch<SetStateAction<number>>,
   setStandings: React.Dispatch<SetStateAction<Player[] | undefined>>,
   setPlayer: React.Dispatch<SetStateAction<Player | undefined>>,
-  setError: React.Dispatch<SetStateAction<string | undefined>>,
   setGameStage: React.Dispatch<SetStateAction<GAME_STAGE>>,
   setRoundData: React.Dispatch<SetStateAction<RoundData>>,
   setWordList: React.Dispatch<SetStateAction<word[]>>,
   setWord: React.Dispatch<SetStateAction<word>>,
-  setmyId: React.Dispatch<string>
+  setmyId: React.Dispatch<string>,
+  setTurnPoints: React.Dispatch<turnPointsType[]>,
+  setTurnPlayerId: React.Dispatch<string>
 ) {
   if (!socket) return;
   socket.onmessage = (event) => {
@@ -228,6 +279,7 @@ function listenSocketMessages(
         setRoundData(message.payload.room);
         setPlayer(message.payload.player);
         setGameStage(message.payload.gameStage);
+        setTurnPlayerId(message.payload.turnPlayerId);
         break;
 
       case CHOOSE_WORD:
@@ -251,6 +303,7 @@ function listenSocketMessages(
           word: message.payload.word,
           wordLength: message.payload.wordLength,
         });
+        setTurnPoints(message.payload.turnPoints);
         break;
 
       case WORD_CHOOSEN_ACK:

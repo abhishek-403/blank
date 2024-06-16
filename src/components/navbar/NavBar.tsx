@@ -18,7 +18,7 @@ export default function NavBar({
   let a = new Array(word.wordLength).fill(0);
 
   return (
-    <div className="flex items-center w-[100%] justify-between border bg-black text-white px-6 py-2 rounded-md font-domine">
+    <div className="flex items-center w-[100%] justify-between border bg-black text-white px-6 py-1 rounded-md font-domine">
       <div className="flex flex-col items-center w-[70px]">
         <div className="text-2xl">{clock}</div>
       </div>

@@ -41,14 +41,15 @@ export type word = {
   word: string;
   wordLength: number;
 };
+export type turnPointsType = { player: Player; lapPoints: number };
 
 export type EachUser = {
   name: string;
   points: number;
   rank: number;
   hasGuessedCurLap: boolean;
-  isMe:boolean;
-isDrawing:boolean|undefined
+  isMe: boolean;
+  isDrawing: boolean | undefined;
 };
 
 export type CanvasState = {

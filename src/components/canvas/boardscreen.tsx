@@ -7,7 +7,7 @@ import {
   UPDATE_GAME_STAGE,
   WORD_CHOOSEN,
 } from "@/constants/messages";
-import { GAME_STAGE, Player, word } from "@/constants/types";
+import { GAME_STAGE, Player, turnPointsType, word } from "@/constants/types";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CryptoJS from "crypto-js";
@@ -19,6 +19,7 @@ type Props = {
   standings: Player[] | undefined;
   word: word;
   myId: string;
+  turnPoints: turnPointsType[];
 };
 export default function SharedBoardScreen({
   wordList,
@@ -28,6 +29,7 @@ export default function SharedBoardScreen({
   standings,
   word,
   myId,
+  turnPoints,
 }: Props) {
   const params = useParams();
   const [isDisabled, setIsDisabled] = useState<boolean>(
@@ -60,10 +62,11 @@ export default function SharedBoardScreen({
   }
 
   return (
-    <div className="m-2 border-2  bg-white w-full h-fit">
-      {/* <button onClick={() => router.push("/")}>back</button> */}
+    <div className=" border-2  bg-white w-full h-fit">
       <div className="relative ">
-        <Canvas isDisabled={isDisabled} />
+        <div className="flex flex-col gap-3">
+          <Canvas isDisabled={isDisabled} />
+        </div>
         <div
           style={{
             display:
@@ -100,7 +103,7 @@ export default function SharedBoardScreen({
               myId={myId}
             />
           ) : gameStage === GAME_STAGE.INTERLAP ? (
-            <InterLapScreen word={word} />
+            <InterLapScreen turnPoints={turnPoints} word={word} />
           ) : (
             <div>
               {player?.isTurnPlayer ? (
@@ -132,11 +135,27 @@ export default function SharedBoardScreen({
 
 type InterLapScreenProps = {
   word: word;
+  turnPoints: turnPointsType[];
 };
-function InterLapScreen({ word }: InterLapScreenProps) {
+function InterLapScreen({ word, turnPoints }: InterLapScreenProps) {
   return (
-    <div className="text-black bg-white p-4 text-xl font-domine rounded-lg">
-      The word was {word.word}
+    <div className="flex flex-col gap-2">
+      <div className="text-black bg-white p-4 text-xl font-domine rounded-lg">
+        The word was {word.word}
+      </div>
+      <div className="flex flex-col gap-2 px-2">
+        {turnPoints.map((u, i) => {
+          return (
+            <div
+              key={i}
+              className="flex justify-between text-lg items-center w-full text-white"
+            >
+              <div>{u.player.user.name}</div>
+              <div className="text-green-400 font-bold">+{u.lapPoints}</div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -193,10 +212,10 @@ function EndScreen({
           );
         })}
       </div>
-      <div className="relative  ">
+      <div className="relative  " onClick={toHome}>
         {isRoomAdmin && (
           <div className="px-4 absolute py-2 mt-4 bg-violet-400 w-full text-white  rounded-md bottom-[3px] text-center">
-            {<button onClick={toHome}>Home</button>}
+            {<button>Home</button>}
           </div>
         )}
       </div>
