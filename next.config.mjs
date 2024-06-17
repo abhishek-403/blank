@@ -4,6 +4,7 @@ const nextConfig = {
   env: {
     CRYPTO_SECRET_KEY: process.env.CRYPTO_SECRET_KEY,
     MAX_WORD_LENGTH: process.env.MAX_WORD_LENGTH,
+    SERVER_BASE_URL: process.env.SERVER_BASE_URL,
   },
 };
 

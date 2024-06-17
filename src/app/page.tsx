@@ -14,7 +14,9 @@ function Home() {
     try {
       if (!name) return;
 
-      const data = await axios.post("http://localhost:3001/createroom");
+      const data = await axios.post(
+        `${process.env.SERVER_BASE_URL}/createroom`
+      );
 
       const res = data.data;
       router.push(`/game/${res.roomId}/?name=${name}`);
