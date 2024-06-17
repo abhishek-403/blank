@@ -75,14 +75,14 @@ function Home() {
         /> */}
         </div>
         <div className="w-full">
-           <button
+          {/* <button
               type="submit"
               className="bg-violet-500 p-2 w-full rounded-md text-xl  text-white  font-medium"
               onClick={createRoom}
             >
               Create room
-            </button>
-          {/* {create ? (
+            </button> */}
+          {create ? (
             <button
               type="submit"
               className="bg-violet-500 p-2 w-full rounded-md text-xl  text-white  font-medium"
@@ -98,7 +98,7 @@ function Home() {
             >
               Join room
             </button>
-          )} */}
+          )}
         </div>
         {/* <div className="w-full">
           {create ? (
@@ -126,7 +126,7 @@ function Home() {
 
 export default function App() {
   return (
-    <Suspense >
+    <Suspense>
       <Home />
     </Suspense>
   );
