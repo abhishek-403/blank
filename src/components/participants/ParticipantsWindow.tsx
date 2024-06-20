@@ -11,7 +11,7 @@ type Props = {
 export default function ParticipantsWindow({ standings, myId, turnPlayerId }: Props) {
  ;
   return (
-    <div className="flex flex-col w-[200px]">
+    <div className="flex flex-col w-[47vw] lg:w-[200px]">
       {standings?.map((u, i) => {
         let user = {
           name: u.user.name,
@@ -41,11 +41,13 @@ function User({
       className="flex font-roboto justify-between items-center border border-[#121212] w-full py-1 px-3"
       style={{ backgroundColor: hasGuessedCurLap ? "#4ade80" : "white" }}
     >
-      <div className="flex text-2xl font-medium">#{rank == 0 ? 1 : rank}</div>
-      <div className="flex items-center flex-col justify-center text-lg">
+      <div className="flex text-md lg:text-2xl font-medium">
+        #{rank == 0 ? 1 : rank}
+      </div>
+      <div className="flex items-center flex-col justify-center text-sm lg:text-lg">
         <div className=" flex gap-1 items-center">
           <div className="font-medium ">{name}</div>
-          <div className="text-md">{isMe ? "(You)" : ""}</div>
+          <div className="text-xs lg:text-md">{isMe ? "(You)" : ""}</div>
         </div>
         <div>{points} points</div>
       </div>

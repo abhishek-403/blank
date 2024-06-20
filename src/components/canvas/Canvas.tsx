@@ -85,14 +85,14 @@ export default function Canvas({ isDisabled }: Props) {
         style={{ display: isDisabled ? "none" : "flex" }}
         className="w-full "
       >
-        <div className="w-full flex gap-2  justify-between items-center cursor-pointer">
-          <div className="flex flex-wrap w-[390px] ">
+        <div className="w-full flex-col lg:flex-row flex gap-2  justify-between items-center cursor-pointer">
+          <div className="flex flex-wrap lg:w-[390px] w-[90vw] px-1 lg:px-0">
             {colorPalette.map((color, i) => {
               return (
                 <div
                   key={i}
                   style={{ backgroundColor: color }}
-                  className={`w-[30px] h-[30px] border border-black hover:opacity-70`}
+                  className={`w-[20px] h-[20px] lg:w-[30px] lg:h-[30px] border border-black hover:opacity-70`}
                   onClick={() => {
                     board.setProperties({ strokeColor: color });
                   }}

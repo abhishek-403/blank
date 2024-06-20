@@ -131,8 +131,8 @@ export default function GamePage() {
   }, [name]);
 
   return (
-    <div className="flex flex-col gap-1  ">
-      <div>
+    <div className="flex flex-col gap-1 w-full overflow-x-hidden  ">
+      <div className="lg:w-[100%] w-[90vw] mx-auto">
         <NavBar
           roundData={roundData}
           clock={clock}
@@ -141,16 +141,16 @@ export default function GamePage() {
           gameStage={gameStage}
         />
       </div>
-      <div className="flex overflow-auto w-full  gap-2 justify-center ">
-        <div>
+      <div className="relative flex overflow-auto w-full  gap-2 justify-center ">
+        <div className={`${player?.isTurnPlayer ?"mt-[102vw]":"mt-[70vw]"} lg:mt-0  lg:relative`}>
           <ParticipantsWindow
             turnPlayerId={turnPlayerId}
             myId={myId}
             standings={standings}
           />
         </div>
-        <div className="flex flex-col gap-2">
-          <div className=" ">
+        <div className="flex flex-col items-center w-[90vw] lg:w-full  gap-2 absolute lg:relative">
+          <div className="w-[90vw] lg:w-full ">
             <SharedBoardScreen
               word={word}
               gameStage={gameStage}
@@ -166,12 +166,12 @@ export default function GamePage() {
             {gameStage !== GAME_STAGE.ONGOING && (
               <div className="flex">
                 <input
-                  className="w-full text-lg p-2"
+                  className="w-full  text-sm lg:text-lg p-2"
                   readOnly
                   value={inviteUrl}
                 />
                 <div
-                  className="relative bg-green-500 cursor-pointer px-4 text-xl py-2 text-white"
+                  className="relative bg-green-500 cursor-pointer px-4 text-sm lg:text-xl py-2 text-white"
                   onClick={async () => {
                     try {
                       await navigator.clipboard.writeText(inviteUrl);
@@ -193,7 +193,7 @@ export default function GamePage() {
               readOnly
             /> */}
         </div>
-        <div>
+        <div className={`${player?.isTurnPlayer ?"mt-[102vw]":"mt-[70vw]"} lg:mt-0  lg:relative`}>
           <ChatWindow socket={socket} chats={chats} player={player} />
         </div>
       </div>

@@ -47,7 +47,7 @@ export default function ChatWindow({ socket, chats, player }: Props) {
 
   return (
     <div>
-      <div className="relative h-[600px] bg-white flex flex-col w-[320px] border border-[#121212]">
+      <div className="relative h-[400px] lg:h-[600px] bg-white flex flex-col w-[48vw] lg:w-[320px] border border-[#121212]">
         <div className="w-full mt-auto mb-10  overflow-y-auto  ">
           {chats.map((e, i) => {
             return (
@@ -64,11 +64,14 @@ export default function ChatWindow({ socket, chats, player }: Props) {
                 }}
               >
                 {e.messageType === MESSAGE_TYPES.NORMAL && (
-                  <div className="font-roboto flex gap-1">
-                    <p className=" text-md ">{e.user.name} </p> <div>:</div>
+                  <div className="font-roboto flex gap-1 items-center">
+                    <p className=" text-sm lg:text-md ">{e.user.name} </p>{" "}
+                    <div>:</div>
                   </div>
                 )}
-                <p className=" overflow-x-hidden">{e.message}</p>
+                <p className="text-sm lg:text-md overflow-x-hidden">
+                  {e.message}
+                </p>
               </div>
             );
           })}
@@ -89,9 +92,9 @@ export default function ChatWindow({ socket, chats, player }: Props) {
             autoFocus
             className="border-2 w-full border-indigo-300 rounded-md px-2"
           />
-          <button className="border p-1 rounded-md" onClick={submitAnswer}>
+          {/* <button className="border p-1 rounded-md" onClick={submitAnswer}>
             Submit
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

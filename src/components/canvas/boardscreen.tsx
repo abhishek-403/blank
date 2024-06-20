@@ -113,7 +113,7 @@ export default function SharedBoardScreen({
                       <div
                         key={i}
                         onClick={() => wordSelected(i)}
-                        className="p-4 border-2 text-black rounded-md bg-white text-xl cursor-pointer hover:bg-zinc-100 "
+                        className="p-2 lg:p-4 border-2 text-black rounded-md bg-white text-sm lg:text-xl cursor-pointer hover:bg-zinc-100 "
                       >
                         {word.word}
                       </div>
@@ -121,7 +121,7 @@ export default function SharedBoardScreen({
                   })}
                 </div>
               ) : (
-                <div className="p-4 text-xl bg-white rounded-lg">
+                <div className="p-2 lg:p-4 text-sm lg:text-xl bg-white rounded-lg">
                   waiting...
                 </div>
               )}
@@ -140,7 +140,7 @@ type InterLapScreenProps = {
 function InterLapScreen({ word, turnPoints }: InterLapScreenProps) {
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-black bg-white p-4 text-xl font-domine rounded-lg">
+      <div className="text-black bg-white p-2 lg:p-4 text-sm lg:text-xl font-domine rounded-lg">
         The word was {word.word}
       </div>
       <div className="flex flex-col gap-2 px-2">
@@ -148,7 +148,7 @@ function InterLapScreen({ word, turnPoints }: InterLapScreenProps) {
           return (
             <div
               key={i}
-              className="flex justify-between text-lg items-center w-full text-white"
+              className="flex justify-between text-sm lg:text-lg items-center w-full text-white"
             >
               <div>{u.player.user.name}</div>
               <div className="text-green-400 font-bold">+{u.lapPoints}</div>
@@ -190,19 +190,21 @@ function EndScreen({
   }
   return (
     <div className="h-full flex flex-col  ">
-      <div className="overflow-auto flex gap-1 flex-col items-center justify-center  h-[100%] ">
+      <div className="overflow-y-auto overflow-x-hidden flex gap-1 flex-col items-center justify-center  h-[100%] ">
         {standings.map((user, i) => {
           return (
             <div
               key={i}
-              className="flex font-roboto justify-between  border bg-white rounded-lg   py-1 px-3 w-[200px] "
+              className="flex font-roboto justify-between  border bg-white rounded-lg   py-1 px-3 w-[180px] lg:w-[220px] "
             >
-              <div className="flex text-2xl font-medium">
+              <div className="flex text-md lg:text-2xl font-medium">
                 #{user.rank == 0 ? 1 : user.rank}
               </div>
-              <div className="flex items-center flex-col justify-center text-lg">
+              <div className="flex items-center flex-col justify-center text-md lg:text-lg">
                 <div className="flex items-center gap-2">
-                  <div className="font-medium text-2xl">{user.user.name}</div>
+                  <div className="font-medium text-md lg:text-2xl">
+                    {user.user.name}
+                  </div>
                   <div>{myId === user.user.id ? "(You)" : ""}</div>
                 </div>
                 <div>{user.points} points</div>
@@ -285,18 +287,18 @@ function GameSettings({
 
   return (
     <div className="flex flex-col gap-4 overflow-auto z-2 w-fit">
-      <div className="flex flex-col items-center justify-center  p-4 bg-gray-100 rounded-lg w-[260px] shadow-md">
+      <div className="flex flex-col items-center justify-center px-2 py-1 lg:p-4 bg-gray-100 rounded-lg w-[150px] lg:w-[260px] shadow-md">
         <div className="w-full">
           <label
             htmlFor="field1"
-            className="block font-medium text-gray-700 text-lg "
+            className="block font-medium text-gray-700 text-sm lg:text-lg "
           >
             Select Time
           </label>
           <select
             id="field1"
             name="field1"
-            className="block w-full mt-2 rounded-md border-black shadow-sm text-xl p-2 "
+            className="block w-full mt-2 rounded-md border-black shadow-sm text-sm lg:text-xl p-1 lg:p-2 "
             value={time}
             onChange={handleField1Change}
           >
@@ -310,14 +312,14 @@ function GameSettings({
         <div className="w-full max-w-xs mt-4">
           <label
             htmlFor="field2"
-            className="block font-medium text-gray-700 text-lg"
+            className="block font-medium text-gray-700 text-sm lg:text-lg"
           >
             Select Rounds
           </label>
           <select
             id="field2"
             name="field2"
-            className="block w-full mt-2 rounded-md border-black shadow-sm text-xl p-2"
+            className="block w-full mt-2 rounded-md border-black shadow-sm text-sm lg:text-xl p-1 lg:p-2"
             value={totalRound}
             onChange={handleField2Change}
           >
@@ -331,7 +333,7 @@ function GameSettings({
       </div>
       <div
         onClick={startGame}
-        className="w-fit cursor-pointer bg-white  py-2 px-6 font-roboto text-xl rounded-lg mx-auto"
+        className="w-fit cursor-pointer bg-white  py-2 px-6 font-roboto text-sm lg:text-xl rounded-lg mx-auto"
       >
         {isRoomAdmin && <button>Start</button>}
       </div>

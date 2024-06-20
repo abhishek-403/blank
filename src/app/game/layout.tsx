@@ -9,7 +9,7 @@ export default function layout({ children }: Props) {
   return (
     <div>
       <div
-        className="flex border-2 border-black overflow-auto w-[1440px] px-20 h-[100vh] gap-4 justify-center"
+        className="flex border-2 border-black overflow-auto w-[1440px] px-2 lg:px-20 h-[100vh] gap-1 lg:gap-4 justify-center"
         style={{
           backgroundImage: `url(${bgImg.src})`,
           backgroundRepeat: "repeat",
