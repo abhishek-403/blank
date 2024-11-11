@@ -69,12 +69,9 @@ export default function SharedBoardScreen({
         </div>
         <div
           style={{
-            display:
-              player?.isRoomAdmin && gameStage === GAME_STAGE.LOBBY
-                ? "flex"
-                : "none",
+            display: gameStage === GAME_STAGE.LOBBY ? "flex" : "none",
           }}
-          className="absolute z-2  bg-[#00000099] top-0 left-0 items-center justify-center w-full h-full  animate-slideDown"
+          className="absolute z-2 bg-sec top-0 left-0 items-center justify-center w-full h-full  animate-slideDown"
         >
           <GameSettings
             isRoomAdmin={player?.isRoomAdmin}
@@ -92,7 +89,7 @@ export default function SharedBoardScreen({
                 ? "flex"
                 : "none",
           }}
-          className=" absolute z-2 bg-[#00000099] animate-slideDown  h-full w-full top-0 left-0 items-center  justify-center "
+          className=" absolute z-2 bg-sec animate-slideDown  h-full w-full top-0 left-0 items-center  justify-center "
         >
           {gameStage === GAME_STAGE.END ? (
             <EndScreen
@@ -107,13 +104,13 @@ export default function SharedBoardScreen({
           ) : (
             <div>
               {player?.isTurnPlayer ? (
-                <div className="   h-full w-full items-center justify-center flex gap-4">
+                <div className="h-full w-full items-center justify-center flex gap-6">
                   {wordList.map((word, i) => {
                     return (
                       <div
                         key={i}
                         onClick={() => wordSelected(i)}
-                        className="p-2 lg:p-4 border-2 text-black rounded-md bg-white text-sm lg:text-xl cursor-pointer hover:bg-zinc-100 "
+                        className="px-3 py-2 lg:px-4  text-sm lg:text-xl border-[3px]  text-white transition-all rounded-lg cursor-pointer hover:text-opacity-60 font-semibold "
                       >
                         {word.word}
                       </div>
@@ -121,7 +118,7 @@ export default function SharedBoardScreen({
                   })}
                 </div>
               ) : (
-                <div className="p-2 lg:p-4 text-sm lg:text-xl bg-white rounded-lg">
+                <div className="px-3 py-2` lg:px-4 py-2 text-sm lg:text-xl border-[3px] font-semibold text-white rounded-lg">
                   waiting...
                 </div>
               )}
@@ -140,8 +137,8 @@ type InterLapScreenProps = {
 function InterLapScreen({ word, turnPoints }: InterLapScreenProps) {
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-black bg-white p-2 lg:p-4 text-sm lg:text-xl font-domine rounded-lg">
-        The word was {word.word}
+      <div className="px-3 py-2 lg:px-4 lg:py-3 text-sm lg:text-2xl  text-white transition-all rounded-lg font-semibold mb-2 border-b border-black">
+        The word was <span className="text-blue-300">{word.word}</span>
       </div>
       <div className="flex flex-col gap-2 px-2">
         {turnPoints.map((u, i) => {
@@ -188,36 +185,61 @@ function EndScreen({
       })
     );
   }
+  const winner = standings.find((stand) => stand.rank === 1);
+  const participants = standings.filter((stand) => stand.rank !== 1);
   return (
     <div className="h-full flex flex-col  ">
-      <div className="overflow-y-auto overflow-x-hidden flex gap-1 flex-col items-center justify-center  h-[100%] ">
-        {standings.map((user, i) => {
-          return (
-            <div
-              key={i}
-              className="flex font-roboto justify-between  border bg-white rounded-lg   py-1 px-3 w-[180px] lg:w-[220px] "
-            >
-              <div className="flex text-md lg:text-2xl font-medium">
-                #{user.rank == 0 ? 1 : user.rank}
+      <div className="overflow-y-auto overflow-x-hidden gap-2 flex-col items-center justify-center my-auto  ">
+        {winner && (
+          <div className="col-span-full mb-3 justify-between  py-1 w-full font-inter ">
+            <div className="flex gap-6 border-[2px] rounded border-sky-300  border-b-0 px-4 mx-auto w-fit justify-center items-center text-sky-300 py-2">
+              <div className="flex text-md lg:text-xl font-medium">
+                #{winner.rank === 0 ? 1 : winner.rank}
               </div>
               <div className="flex items-center flex-col justify-center text-md lg:text-lg">
                 <div className="flex items-center gap-2">
                   <div className="font-medium text-md lg:text-2xl">
-                    {user.user.name}
+                    {winner.user.name}
                   </div>
-                  <div>{myId === user.user.id ? "(You)" : ""}</div>
+                  <div>{myId === winner.user.id ? "(You)" : ""}</div>
                 </div>
-                <div>{user.points} points</div>
+                <div className="text-xs">{winner.points} points</div>
               </div>
               <div></div>
             </div>
-          );
-        })}
+          </div>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-between rounded py-1 px-3 gap-y-4 font-inter">
+          {participants.map((user, i) => {
+            return (
+              <div
+                key={i}
+                className="flex gap-6 border-[2px] py-1 rounded  px-2 mx-auto border-neutral-40 w-fit justify-center items-center text-white   border-b-0 min-w-[180px] max-w-[200px]"
+              >
+                <div className="flex text-md lg:text-xl font-medium">
+                  #{user.rank === 0 ? 1 : user.rank}
+                </div>
+                <div className="flex items-center flex-col justify-center text-md lg:text-lg">
+                  <div className="flex items-center gap-2">
+                    <div className="font-medium text-md lg:text-xl">
+                      {user.user.name}
+                    </div>
+                    <div className="font-medium text-md lg:text-sm">
+                      {myId === user.user.id ? "(You)" : ""}
+                    </div>
+                  </div>
+                  <div className="text-xs">{user.points} points</div>
+                </div>
+                <div></div>
+              </div>
+            );
+          })}
+        </div>
       </div>
-      <div className="relative  " onClick={toHome}>
+      <div className="relative" onClick={toHome}>
         {isRoomAdmin && (
-          <div className="px-4 absolute py-2 mt-4 bg-violet-400 w-full text-white  rounded-md bottom-[3px] text-center">
-            {<button>Home</button>}
+          <div className="px-4 absolute py-2 mt-4 bg-violet-400 w-full text-white font-semibold rounded-md bottom-[3px] text-center">
+            <button>Home</button>
           </div>
         )}
       </div>
@@ -287,23 +309,24 @@ function GameSettings({
 
   return (
     <div className="flex flex-col gap-4 overflow-auto z-2 w-fit">
-      <div className="flex flex-col items-center justify-center px-2 py-1 lg:p-4 bg-gray-100 rounded-lg w-[150px] lg:w-[260px] shadow-md">
+      <div className="flex flex-col items-center justify-center px-2 py-1 lg:p-4 text-white  border-neutral-20 border-2 rounded-lg w-[150px] lg:w-[260px] shadow-md">
         <div className="w-full">
           <label
             htmlFor="field1"
-            className="block font-medium text-gray-700 text-sm lg:text-lg "
+            className="block font-medium text-white text-sm lg:text-lg "
           >
             Select Time
           </label>
           <select
             id="field1"
             name="field1"
-            className="block w-full mt-2 rounded-md border-black shadow-sm text-sm lg:text-xl p-1 lg:p-2 "
+            className="block w-full mt-2 rounded-md text-white border border-neutral-40 bg-sec shadow-sm text-sm lg:text-xl p-1 lg:p-2 "
             value={time}
+            disabled={!isRoomAdmin}
             onChange={handleField1Change}
           >
             {timeOptions.map((value) => (
-              <option key={value} value={value}>
+              <option className="text-white bg-sec" key={value} value={value}>
                 {value}
               </option>
             ))}
@@ -312,15 +335,16 @@ function GameSettings({
         <div className="w-full max-w-xs mt-4">
           <label
             htmlFor="field2"
-            className="block font-medium text-gray-700 text-sm lg:text-lg"
+            className="block font-medium text-white text-sm lg:text-lg"
           >
             Select Rounds
           </label>
           <select
             id="field2"
             name="field2"
-            className="block w-full mt-2 rounded-md border-black shadow-sm text-sm lg:text-xl p-1 lg:p-2"
+            className="block w-full mt-2 rounded-md  border border-neutral-40 bg-sec shadow-sm text-sm lg:text-xl p-1 lg:p-2"
             value={totalRound}
+            disabled={!isRoomAdmin}
             onChange={handleField2Change}
           >
             {roundOptions.map((value) => (
@@ -331,12 +355,14 @@ function GameSettings({
           </select>
         </div>
       </div>
-      <div
-        onClick={startGame}
-        className="w-fit cursor-pointer bg-white  py-2 px-6 font-roboto text-sm lg:text-xl rounded-lg mx-auto"
-      >
-        {isRoomAdmin && <button>Start</button>}
-      </div>
+      {isRoomAdmin && (
+        <div
+          onClick={startGame}
+          className="w-fit cursor-pointer bg-white  py-2 px-6 font-roboto text-sm lg:text-xl rounded-lg mx-auto"
+        >
+          <button>Start</button>
+        </div>
+      )}
     </div>
   );
 }

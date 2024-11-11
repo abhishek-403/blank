@@ -40,7 +40,9 @@ function Home() {
       setRoomId(searchparams.get("prevId"));
     }
   }, [searchparams]);
-
+  useEffect(() => {
+    axios.get(`${process.env.SERVER_BASE_URL}/visit`);
+  }, []);
   return (
     <div
       style={{

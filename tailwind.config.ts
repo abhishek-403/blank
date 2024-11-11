@@ -12,6 +12,22 @@ const config: Config = {
       domine: ["Domine", "serif"],
     },
     extend: {
+      colors: {
+        sec: { DEFAULT: "#404040" },
+        neutral: {
+          100: "#000000",
+          90: "#1A1A1A",
+          80: "#333333",
+          70: "#4D4D4D",
+          60: "#666666",
+          50: "#808080`",
+          40: "#999999",
+          30: "#B3B3B3",
+          20: "#CCCCCC",
+          10: "#E6E6E6",
+          0: "#FFFFFF",
+        },
+      },
       cursor: {
         dot: "url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMyIgaGVpZ2h0PSIzIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxjaXJjbGUgY3g9IjEuNSIgY3k9IjEuNSIgcj0iMS41IiBmaWxsPSJibGFjayIgLz48L3N2Zz4=)",
         bucket:
