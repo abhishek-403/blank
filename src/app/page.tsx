@@ -3,6 +3,7 @@ import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import bgImg from "../components/assets/background.png";
+import Footer from "@/components/footer";
 function Home() {
   const router = useRouter();
   const searchparams = useSearchParams();
@@ -122,6 +123,7 @@ function Home() {
           )}
         </div> */}
       </div>
+      <Footer />
     </div>
   );
 }
