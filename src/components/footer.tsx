@@ -18,4 +18,3 @@ export default function Footer({}: Props) {
     </footer>
   );
 }
-5;
