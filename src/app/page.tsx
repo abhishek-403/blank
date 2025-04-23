@@ -1,20 +1,20 @@
 "use client";
+import Footer from "@/components/footer";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import bgImg from "../components/assets/background.png";
-import Footer from "@/components/footer";
 function Home() {
   const router = useRouter();
   const searchparams = useSearchParams();
   const [name, setName] = useState<string>("");
   const [roomId, setRoomId] = useState<string | null>("");
   const [create, setCreate] = useState<boolean>(true);
-
+  const [loading, setLoading] = useState<boolean>(false);
   async function createRoom() {
     try {
+      setLoading(true);
       if (!name) return;
-
       const data = await axios.post(
         `${process.env.SERVER_BASE_URL}/createroom`
       );
@@ -22,7 +22,9 @@ function Home() {
       const res = data.data;
       router.push(`/game/${res.roomId}/?name=${name}`);
     } catch (e) {
-      console.log(e);
+      
+    } finally {
+      setLoading(false);
     }
   }
   async function joinRoom() {
@@ -91,7 +93,7 @@ function Home() {
               className="bg-violet-500 p-2 w-full rounded-md text-xl  text-white  font-medium"
               onClick={createRoom}
             >
-              Create room
+              {loading ? "Loading..." : "Create room"}
             </button>
           ) : (
             <button
