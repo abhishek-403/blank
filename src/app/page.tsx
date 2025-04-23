@@ -92,6 +92,7 @@ function Home() {
               type="submit"
               className="bg-violet-500 p-2 w-full rounded-md text-xl  text-white  font-medium"
               onClick={createRoom}
+              disabled={loading}
             >
               {loading ? "Loading..." : "Create room"}
             </button>
