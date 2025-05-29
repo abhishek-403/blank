@@ -22,7 +22,6 @@ function Home() {
       const res = data.data;
       router.push(`/game/${res.roomId}/?name=${name}`);
     } catch (e) {
-      
     } finally {
       setLoading(false);
     }

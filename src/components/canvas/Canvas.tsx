@@ -7,11 +7,10 @@ import {
   colorPalette,
   dotIcon,
 } from "@/constants/messages";
-import { IoIosColorFill, IoIosUndo } from "react-icons/io";
-import { FaPencil } from "react-icons/fa6";
 import React, { useEffect, useRef, useState } from "react";
+import { FaPencil } from "react-icons/fa6";
+import { IoIosColorFill, IoIosUndo } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
-import dot from "@/components/assets/dot-svg.svg";
 type Props = {
   isDisabled: boolean;
 };
@@ -37,27 +36,82 @@ export default function Canvas({ isDisabled }: Props) {
       setBoard(newBoard);
     }
   }
+
+  const getCanvasCoordinates = (
+    e:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>,
+    canvas: HTMLCanvasElement
+  ) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    let clientX: number, clientY: number;
+
+    if ("touches" in e && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else if ("changedTouches" in e && e.changedTouches.length > 0) {
+      clientX = e.changedTouches[0].clientX;
+      clientY = e.changedTouches[0].clientY;
+    } else {
+      clientX = (e as React.MouseEvent).clientX;
+      clientY = (e as React.MouseEvent).clientY;
+    }
+
+    const x = (clientX - rect.left) * scaleX;
+    const y = (clientY - rect.top) * scaleY;
+
+    return { x, y };
+  };
+
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!board || !canvasRef.current) return;
-    const x = e.nativeEvent.offsetX;
-    const y = e.nativeEvent.offsetY;
-    board.handleMouseDown(x, y);
+
+    const { x, y } = getCanvasCoordinates(e, canvasRef.current);
+    board.handleMouseDown(Math.round(x), Math.round(y));
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!board || !canvasRef.current) return;
-    const x = e.nativeEvent.offsetX;
-    const y = e.nativeEvent.offsetY;
 
-    board.handleMouseMove(x, y);
+    const { x, y } = getCanvasCoordinates(e, canvasRef.current);
+    board.handleMouseMove(Math.round(x), Math.round(y));
   };
 
   const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!board) return;
-    const x = e.nativeEvent.offsetX;
-    const y = e.nativeEvent.offsetY;
-    board.handleMouseUp(x, y);
+    if (!board || !canvasRef.current) return;
+
+    const { x, y } = getCanvasCoordinates(e, canvasRef.current);
+    board.handleMouseUp(Math.round(x), Math.round(y));
   };
+
+  // Touch event handlers for mobile
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    if (!board || !canvasRef.current) return;
+
+    const { x, y } = getCanvasCoordinates(e, canvasRef.current);
+    board.handleMouseDown(Math.round(x), Math.round(y));
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    if (!board || !canvasRef.current) return;
+
+    const { x, y } = getCanvasCoordinates(e, canvasRef.current);
+    board.handleMouseMove(Math.round(x), Math.round(y));
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    if (!board || !canvasRef.current) return;
+
+    const { x, y } = getCanvasCoordinates(e, canvasRef.current);
+    board.handleMouseUp(Math.round(x), Math.round(y));
+  };
+
   return (
     <div className=" h-fit w-full ">
       <div className={`relative `}>
@@ -68,6 +122,9 @@ export default function Canvas({ isDisabled }: Props) {
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
           className={`border-2 border-black h-full  w-full `}
           id="canvas_id"
           style={{

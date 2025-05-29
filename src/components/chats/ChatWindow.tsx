@@ -89,12 +89,17 @@ export default function ChatWindow({ socket, chats, player }: Props) {
             }}
             type="text"
             disabled={player?.isTurnPlayer || player?.hasGuessedCurLap}
-            autoFocus
+            autoFocus={!player?.isTurnPlayer && !player?.hasGuessedCurLap}
             className="border-2 w-full border-indigo-300 rounded-md px-2"
           />
-          {/* <button className="border p-1 rounded-md" onClick={submitAnswer}>
-            Submit
-          </button> */}
+          {!player?.isTurnPlayer && !player?.hasGuessedCurLap && (
+            <button
+              className="border md:text-sm text-xs px-2 py-1 rounded-md flex gap-1 items-center justify-center"
+              onClick={submitAnswer}
+            >
+              Submit
+            </button>
+          )}
         </div>
       </div>
     </div>

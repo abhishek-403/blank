@@ -70,7 +70,16 @@ export default function GamePage() {
   const [wordList, setWordList] = useState<word[]>([
     { word: "", wordLength: 0 },
   ]);
-  // const
+  let name = searchparam.get("name");
+  useEffect(() => {
+    if (!name) {
+      let prevId = params.roomId;
+      if (!prevId) {
+        router.replace("/");
+      }
+      router.replace(`/?prevId=${prevId}`);
+    }
+  }, [name]);
 
   useEffect(() => {
     if (!socket) {
@@ -119,17 +128,6 @@ export default function GamePage() {
     };
   }, [socket]);
 
-  let name = searchparam.get("name");
-  useEffect(() => {
-    if (!name) {
-      let prevId = params.roomId;
-      if (!prevId) {
-        router.replace("/");
-      }
-      router.replace(`/?prevId=${prevId}`);
-    }
-  }, [name]);
-
   return (
     <div className="flex flex-col gap-1 w-full overflow-x-hidden  ">
       <div className="lg:w-[100%] w-[90vw] mx-auto">
@@ -142,7 +140,11 @@ export default function GamePage() {
         />
       </div>
       <div className="relative flex overflow-auto w-full  gap-2 justify-center ">
-        <div className={`${player?.isTurnPlayer ?"mt-[102vw]":"mt-[70vw]"} lg:mt-0  lg:relative`}>
+        <div
+          className={`${
+            player?.isTurnPlayer ? "mt-[102vw]" : "mt-[70vw]"
+          } lg:mt-0  lg:relative`}
+        >
           <ParticipantsWindow
             turnPlayerId={turnPlayerId}
             myId={myId}
@@ -193,7 +195,11 @@ export default function GamePage() {
               readOnly
             /> */}
         </div>
-        <div className={`${player?.isTurnPlayer ?"mt-[102vw]":"mt-[70vw]"} lg:mt-0  lg:relative`}>
+        <div
+          className={`${
+            player?.isTurnPlayer ? "mt-[102vw]" : "mt-[70vw]"
+          } lg:mt-0  lg:relative`}
+        >
           <ChatWindow socket={socket} chats={chats} player={player} />
         </div>
       </div>
